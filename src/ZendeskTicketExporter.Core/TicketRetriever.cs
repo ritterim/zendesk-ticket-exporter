@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Logging;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -14,14 +15,16 @@ namespace ZendeskTicketExporter.Core
         private readonly string _siteName;
         private readonly string _username;
         private readonly string _apiToken;
+        private readonly ILog _log;
 
         public DateTime? _lastBatchRetrivedAt;
 
-        public TicketRetriever(string siteName, string username, string apiToken)
+        public TicketRetriever(string siteName, string username, string apiToken, ILog log)
         {
             _siteName = siteName;
             _username = username;
             _apiToken = apiToken;
+            _log = log;
         }
 
         public async Task<TicketExportResponse> GetBatch(long? marker)
@@ -31,7 +34,7 @@ namespace ZendeskTicketExporter.Core
                 var nextAllowedRequest = _lastBatchRetrivedAt.Value.Add(
                     Configuration.ZendeskRequiredCooloffBetweenIncrementalTicketExportResults);
 
-                await WaitUntil(nextAllowedRequest);
+                await WaitUntil(nextAllowedRequest, marker);
             }
 
             var ticketsBatch = await GetTicketsBatch(marker);
@@ -88,11 +91,18 @@ namespace ZendeskTicketExporter.Core
             }
         }
 
-        private static async Task WaitUntil(DateTime waitUntil)
+        private async Task WaitUntil(DateTime waitUntil, long? marker)
         {
             var timespanToWait = waitUntil.Subtract(DateTime.UtcNow);
             if (timespanToWait.Ticks > 0)
+            {
+                _log.InfoFormat(
+                    "Waiting until {0} to get tickets for marker {1}",
+                    waitUntil.ToLocalTime().ToString(),
+                    marker.GetValueOrDefault());
+
                 await Task.Delay(timespanToWait);
+            }
         }
     }
 }

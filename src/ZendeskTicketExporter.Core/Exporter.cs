@@ -1,4 +1,5 @@
-﻿using LiteGuard;
+﻿using Common.Logging;
+using LiteGuard;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace ZendeskTicketExporter.Core
 {
     public class Exporter
     {
+        private readonly ILog _log;
         private readonly IDatabase _database;
         private readonly IMarkerStorage _markerStorage;
         private readonly ITicketRetriever _ticketRetriever;
@@ -15,12 +17,14 @@ namespace ZendeskTicketExporter.Core
         private readonly ICsvFileWriter _csvFileWriter;
 
         public Exporter(
+            ILog log,
             IDatabase database,
             IMarkerStorage markerStorage,
             ITicketRetriever ticketRetriever,
             IMergedTicketExporter mergeExporter,
             ICsvFileWriter csvFileWriter)
         {
+            _log = log;
             _database = database;
             _markerStorage = markerStorage;
             _ticketRetriever = ticketRetriever;
@@ -34,13 +38,15 @@ namespace ZendeskTicketExporter.Core
             Guard.AgainstNullArgument("username", username);
             Guard.AgainstNullArgument("apiToken", apiToken);
 
+            var log = LogManager.GetCurrentClassLogger();
             var dbFile = "ZendeskTicketExporter.sqlite";
             var database = new Database(dbFile);
 
             return new Exporter(
+                log,
                 database,
                 new SQLiteMarkerStorage(database),
-                new TicketRetriever(siteName, username, apiToken),
+                new TicketRetriever(siteName, username, apiToken, log),
                 new SQLiteMergedTicketExporter(database),
                 new CsvFileWriter());
         }
@@ -53,9 +59,18 @@ namespace ZendeskTicketExporter.Core
 
             while (true)
             {
+                _log.InfoFormat("Begin copying tickets using marker {0}", marker.GetValueOrDefault());
+
                 var batch = await _ticketRetriever.GetBatch(marker);
                 if (batch.Results.Any())
+                {
+                    _log.InfoFormat(
+                        "Inserting / updating {0} tickets in database retrieved from marker {1}",
+                        batch.Results.Count(),
+                        marker.GetValueOrDefault());
+
                     await _mergeExporter.WriteAsync(batch.Results);
+                }
 
                 marker = batch.EndTime;
                 await _markerStorage.UpdateCurrentMarker(marker.Value);
@@ -67,11 +82,15 @@ namespace ZendeskTicketExporter.Core
                 if (batch.Results.Count() < Configuration.ZendeskMaxItemsReturnedFromTicketExportApi)
                     break;
             }
+
+            _log.Info("Completed copying tickets.");
         }
 
         public async Task ExportLocalCopyToCsv(string csvFilePath, bool allowOverwrite = false)
         {
             Guard.AgainstNullArgument("csvFilePath", csvFilePath);
+
+            _log.Info("Writing tickets to csv file from local database");
 
             var records = await _database.QueryAsync<TicketExportResult>(
                 "select * from " + Configuration.TicketsTableName);

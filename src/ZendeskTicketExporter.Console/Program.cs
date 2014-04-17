@@ -1,5 +1,7 @@
 ﻿using CommandLine;
 using CommandLine.Text;
+using Common.Logging;
+using Common.Logging.Simple;
 using ZendeskTicketExporter.Core;
 
 namespace ZendeskTicketExporter.Console
@@ -31,6 +33,10 @@ namespace ZendeskTicketExporter.Console
         [Option('o', "export-csv-file-overwrite", Required = false,
             HelpText = "Permit overwriting of export-csv-file")]
         public bool CsvExportPathPermitOverwrite { get; set; }
+
+        [Option('q', "quiet", Required = false,
+            HelpText = "Suppress console logging output")]
+        public bool Quiet { get; set; }
     }
 
     internal class Program
@@ -40,6 +46,8 @@ namespace ZendeskTicketExporter.Console
             var options = new Options();
             if (Parser.Default.ParseArguments(args, options))
             {
+                ConfigureLogging(options);
+
                 var exporter = Exporter.GetDefaultInstance(
                     options.SiteName,
                     options.Username,
@@ -59,6 +67,19 @@ namespace ZendeskTicketExporter.Console
             {
                 var helpText = HelpText.AutoBuild(options);
                 Console.WriteLine(helpText);
+            }
+        }
+
+        private static void ConfigureLogging(Options options)
+        {
+            if (options.Quiet == false)
+            {
+                LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter(
+                    level: LogLevel.All,
+                    showDateTime: true,
+                    showLogName: false,
+                    showLevel: false,
+                    dateTimeFormat: null);
             }
         }
     }

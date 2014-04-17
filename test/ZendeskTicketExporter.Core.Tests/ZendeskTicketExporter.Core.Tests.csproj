@@ -35,6 +35,12 @@
     <Reference Include="AssertExLib">
       <HintPath>..\..\packages\AssertEx.1.0.0\lib\net45\AssertExLib.dll</HintPath>
     </Reference>
+    <Reference Include="Common.Logging">
+      <HintPath>..\..\packages\Common.Logging.2.2.0\lib\net40\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging.Core">
+      <HintPath>..\..\packages\Common.Logging.Core.2.2.0\lib\net40\Common.Logging.Core.dll</HintPath>
+    </Reference>
     <Reference Include="CsvHelper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\CsvHelper.2.5.0\lib\net40-client\CsvHelper.dll</HintPath>

@@ -1,4 +1,5 @@
 ﻿using AssertExLib;
+using Common.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace ZendeskTicketExporter.Core.Tests
 {
     public class ExporterTests
     {
+        private readonly ILog _log;
         private readonly IDatabase _database;
         private readonly IMarkerStorage _markerStorage;
         private readonly ITicketRetriever _ticketRetriever;
@@ -20,13 +22,14 @@ namespace ZendeskTicketExporter.Core.Tests
 
         public ExporterTests()
         {
+            _log = Mock.Of<ILog>();
             _database = Mock.Of<IDatabase>();
             _markerStorage = Mock.Of<IMarkerStorage>();
             _ticketRetriever = Mock.Of<ITicketRetriever>();
             _mergeExporter = Mock.Of<IMergedTicketExporter>();
             _csvFileWriter = Mock.Of<ICsvFileWriter>();
 
-            _sut = new Exporter(_database, _markerStorage, _ticketRetriever, _mergeExporter, _csvFileWriter);
+            _sut = new Exporter(_log, _database, _markerStorage, _ticketRetriever, _mergeExporter, _csvFileWriter);
 
             SetupDefaultMocks();
         }
