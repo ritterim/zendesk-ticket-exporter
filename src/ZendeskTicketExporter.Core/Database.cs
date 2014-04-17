@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using System;
+using LiteGuard;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
@@ -20,7 +20,7 @@ namespace ZendeskTicketExporter.Core
 
         public async Task ExecuteAsync(string sql, object param = null)
         {
-            if (sql == null) throw new ArgumentNullException("sql");
+            Guard.AgainstNullArgument("sql", sql);
 
             using (var conn = await GetOpenConnectionAsync())
             {
@@ -30,7 +30,7 @@ namespace ZendeskTicketExporter.Core
 
         public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object param = null)
         {
-            if (sql == null) throw new ArgumentNullException("sql");
+            Guard.AgainstNullArgument("sql", sql);
 
             using (var conn = await GetOpenConnectionAsync())
             {
@@ -40,7 +40,7 @@ namespace ZendeskTicketExporter.Core
 
         public async Task<T> QueryScalerAsync<T>(string sql, object param = null)
         {
-            if (sql == null) throw new ArgumentNullException("sql");
+            Guard.AgainstNullArgument("sql", sql);
 
             using (var conn = await GetOpenConnectionAsync())
             {
@@ -51,7 +51,7 @@ namespace ZendeskTicketExporter.Core
 
         public async Task<bool> TableExistsAsync(string tableName)
         {
-            if (tableName == null) throw new ArgumentNullException("tableName");
+            Guard.AgainstNullArgument("tableName", tableName);
 
             using (var conn = await GetOpenConnectionAsync())
             {

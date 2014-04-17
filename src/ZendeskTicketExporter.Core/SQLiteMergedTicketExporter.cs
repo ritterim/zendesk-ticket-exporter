@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using System;
+using LiteGuard;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -21,7 +21,7 @@ namespace ZendeskTicketExporter.Core
 
         public async Task WriteAsync(IEnumerable<TicketExportResult> tickets)
         {
-            if (tickets == null) throw new ArgumentNullException("tickets");
+            Guard.AgainstNullArgument("tickets", tickets);
 
             await _database.ExecuteAsync(string.Format(
                 "create table if not exists {0} ({1}, primary key (Id));",

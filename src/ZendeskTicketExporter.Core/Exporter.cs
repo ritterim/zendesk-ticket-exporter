@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LiteGuard;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ZendeskApi_v2.Models.Tickets;
@@ -29,9 +30,9 @@ namespace ZendeskTicketExporter.Core
 
         public static Exporter GetDefaultInstance(string siteName, string username, string apiToken)
         {
-            if (siteName == null) throw new ArgumentNullException("siteName");
-            if (username == null) throw new ArgumentNullException("username");
-            if (apiToken == null) throw new ArgumentNullException("apiToken");
+            Guard.AgainstNullArgument("siteName", siteName);
+            Guard.AgainstNullArgument("username", username);
+            Guard.AgainstNullArgument("apiToken", apiToken);
 
             var dbFile = "ZendeskTicketExporter.sqlite";
             var database = new Database(dbFile);
@@ -70,7 +71,7 @@ namespace ZendeskTicketExporter.Core
 
         public async Task ExportLocalCopyToCsv(string csvFilePath, bool allowOverwrite = false)
         {
-            if (csvFilePath == null) throw new ArgumentNullException("csvFilePath");
+            Guard.AgainstNullArgument("csvFilePath", csvFilePath);
 
             var records = await _database.QueryAsync<TicketExportResult>(
                 "select * from " + Configuration.TicketsTableName);

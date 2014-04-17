@@ -1,4 +1,5 @@
 ﻿using CsvHelper;
+using LiteGuard;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,8 +11,8 @@ namespace ZendeskTicketExporter.Core
     {
         public void WriteFile<T>(IEnumerable<T> records, string filePath, bool allowOverwrite = false)
         {
-            if (records == null) throw new ArgumentNullException("records");
-            if (filePath == null) throw new ArgumentNullException("filePath");
+            Guard.AgainstNullArgument("records", records);
+            Guard.AgainstNullArgument("filePath", filePath);
 
             HandleFileOverwrite(filePath, allowOverwrite);
 
