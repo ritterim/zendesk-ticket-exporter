@@ -29,6 +29,10 @@ Update an existing local copy and output csv with csv overwrite permitted:
 
 `ZendeskTicketExporter.Console.exe -s mysitename -u admin@example.com -t myapitoken -e output.csv -o`
 
+Update an existing local copy and output csv to UNC path:
+
+`ZendeskTicketExporter.Console.exe -s mysitename -u admin@example.com -t myapitoken -e \\machinename\sharename\output.csv`
+
 Options:
 --------
 ```
