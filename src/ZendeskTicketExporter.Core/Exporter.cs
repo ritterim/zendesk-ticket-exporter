@@ -39,7 +39,7 @@ namespace ZendeskTicketExporter.Core
             Guard.AgainstNullArgument("apiToken", apiToken);
 
             var log = LogManager.GetCurrentClassLogger();
-            var dbFile = "ZendeskTicketExporter.sqlite";
+            var dbFile = siteName + ".sqlite";
             var database = new Database(dbFile);
 
             return new Exporter(
