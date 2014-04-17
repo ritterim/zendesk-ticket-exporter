@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{6C6ECEAB-6
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZendeskTicketExporter.Core.Tests", "test\ZendeskTicketExporter.Core.Tests\ZendeskTicketExporter.Core.Tests.csproj", "{02B44DA8-7149-407B-B588-0BDC1E5CD9A1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZendeskTicketExporter.Console", "src\ZendeskTicketExporter.Console\ZendeskTicketExporter.Console.csproj", "{F741E397-224B-4D1A-87CB-1B89D8538462}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{02B44DA8-7149-407B-B588-0BDC1E5CD9A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02B44DA8-7149-407B-B588-0BDC1E5CD9A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02B44DA8-7149-407B-B588-0BDC1E5CD9A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F741E397-224B-4D1A-87CB-1B89D8538462}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F741E397-224B-4D1A-87CB-1B89D8538462}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F741E397-224B-4D1A-87CB-1B89D8538462}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F741E397-224B-4D1A-87CB-1B89D8538462}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
