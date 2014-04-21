@@ -33,6 +33,14 @@ Update an existing local copy and output csv to UNC path:
 
 `ZendeskTicketExporter.Console.exe -s mysitename -u admin@example.com -t myapitoken -e \\machinename\sharename\output.csv`
 
+Rolling CSV exports using Powershell:
+
+```
+$timestamp = $(Get-Date).ToUniversalTime().ToString("yyyy-MM-dd-hhmmss")
+$csvOutputPath = "\\machinename\sharename\$timestamp-utc.csv"
+.\ZendeskTicketExporter.Console.exe -s mysitename -u admin@example.com -t myapitoken -e $csvOutputPath
+```
+
 Options:
 --------
 ```
