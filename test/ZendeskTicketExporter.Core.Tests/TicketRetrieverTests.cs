@@ -45,7 +45,7 @@ namespace ZendeskTicketExporter.Core.Tests
             await _sut.GetBatchAsync(marker: 123);
 
             Mock.Get(_wait).Verify(
-                x => x.UntilAsync(It.IsAny<DateTime>(), /* now */ null),
+                x => x.UntilAsync(It.IsAny<DateTime>(), /* now */ It.IsAny<Nullable<DateTime>>()),
                 Times.Never());
         }
 
