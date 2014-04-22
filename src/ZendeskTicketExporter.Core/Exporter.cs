@@ -32,17 +32,17 @@ namespace ZendeskTicketExporter.Core
             _csvFileWriter = csvFileWriter;
         }
 
-        public static Exporter GetDefaultInstance(string siteName, string username, string apiToken)
+        public static Exporter GetDefaultInstance(string sitename, string username, string apiToken)
         {
-            Guard.AgainstNullArgument("siteName", siteName);
+            Guard.AgainstNullArgument("sitename", sitename);
             Guard.AgainstNullArgument("username", username);
             Guard.AgainstNullArgument("apiToken", apiToken);
 
             var log = LogManager.GetCurrentClassLogger();
-            var dbFile = siteName + ".sqlite";
+            var dbFile = sitename + ".sqlite";
             var database = new Database(dbFile);
             var wait = new Wait(log);
-            var zendeskApi = new ZendeskApi(siteName, username, apiToken, log);
+            var zendeskApi = new ZendeskApi(sitename, username, apiToken, log);
 
             return new Exporter(
                 log,

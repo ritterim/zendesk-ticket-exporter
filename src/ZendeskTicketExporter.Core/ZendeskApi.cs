@@ -12,14 +12,14 @@ namespace ZendeskTicketExporter.Core
 {
     public class ZendeskApi : IZendeskApi
     {
-        private readonly string _siteName;
+        private readonly string _sitename;
         private readonly string _username;
         private readonly string _apiToken;
         private readonly ILog _log;
 
-        public ZendeskApi(string siteName, string username, string apiToken, ILog log)
+        public ZendeskApi(string sitename, string username, string apiToken, ILog log)
         {
-            _siteName = siteName;
+            _sitename = sitename;
             _username = username;
             _apiToken = apiToken;
             _log = log;
@@ -47,7 +47,7 @@ namespace ZendeskTicketExporter.Core
 
             using (var client = new HttpClient(handler))
             {
-                client.BaseAddress = Configuration.GetZendeskApiUri(_siteName);
+                client.BaseAddress = Configuration.GetZendeskApiUri(_sitename);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 

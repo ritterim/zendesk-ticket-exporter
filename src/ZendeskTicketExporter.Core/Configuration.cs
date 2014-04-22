@@ -20,9 +20,9 @@ namespace ZendeskTicketExporter.Core
         // http://developer.zendesk.com/documentation/rest_api/ticket_export.html on 4/9/2014
         public static readonly TimeSpan ZendeskMinimumRequiredHistoricalMinutes = TimeSpan.FromMinutes(5);
 
-        public static Uri GetZendeskApiUri(string siteName)
+        public static Uri GetZendeskApiUri(string sitename)
         {
-            var uri = new Uri(string.Format("https://{0}.zendesk.com/api/v2/", Uri.EscapeUriString(siteName)));
+            var uri = new Uri(string.Format("https://{0}.zendesk.com/api/v2/", Uri.EscapeUriString(sitename)));
             return uri;
         }
 
