@@ -12,7 +12,7 @@ namespace ZendeskTicketExporter.Console
     {
         [Option('s', "sitename", Required = true,
             HelpText = "Site name for accessing Zendesk API (https://[your-site-name].zendesk.com)")]
-        public string SiteName { get; set; }
+        public string Sitename { get; set; }
 
         [Option('u', "username", Required = true,
             HelpText = "Username for accessing Zendesk API (do not include \"/token\")")]
@@ -49,7 +49,7 @@ namespace ZendeskTicketExporter.Console
                 ConfigureLogging(options);
 
                 var exporter = Exporter.GetDefaultInstance(
-                    options.SiteName,
+                    options.Sitename,
                     options.Username,
                     options.ApiToken);
 
