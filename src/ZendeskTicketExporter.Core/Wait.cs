@@ -15,7 +15,9 @@ namespace ZendeskTicketExporter.Core
 
         public async Task UntilAsync(DateTime waitUntil, DateTime? now = null)
         {
-            var timespanToWait = waitUntil.Subtract(now ?? DateTime.UtcNow);
+            var utcNow = now == null ? DateTime.UtcNow : now.Value.ToUniversalTime();
+
+            var timespanToWait = waitUntil.ToUniversalTime().Subtract(utcNow);
             if (timespanToWait.Ticks > 0)
             {
                 _log.InfoFormat(
