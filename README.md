@@ -44,7 +44,7 @@ $csvOutputPath = "\\machinename\sharename\$timestamp-utc.csv"
 Options:
 --------
 ```
--s, --sitename                     Required. Site name for accessing Zendesk
+-s, --sitename                     Required. Sitename for accessing Zendesk
                                    API (https://[your-site-name].zendesk.com).
 
 -u, --username                     Required. Username for accessing Zendesk
