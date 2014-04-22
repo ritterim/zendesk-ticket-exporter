@@ -61,13 +61,13 @@ namespace ZendeskTicketExporter.Core
 
             while (true)
             {
-                _log.InfoFormat("Begin copying tickets using marker {0}", marker.GetValueOrDefault());
+                _log.InfoFormat("Begin copying tickets using marker {0}.", marker.GetValueOrDefault());
 
                 var batch = await _ticketRetriever.GetBatchAsync(marker);
                 if (batch.Results.Any())
                 {
                     _log.InfoFormat(
-                        "Inserting / updating {0} tickets in database retrieved from marker {1}",
+                        "Inserting / updating {0} tickets in database retrieved from marker {1}.",
                         batch.Results.Count(),
                         marker.GetValueOrDefault());
 
@@ -92,7 +92,7 @@ namespace ZendeskTicketExporter.Core
         {
             Guard.AgainstNullArgument("csvFilePath", csvFilePath);
 
-            _log.Info("Writing tickets to csv file from local database");
+            _log.Info("Writing tickets to csv file from local database.");
 
             var records = await _database.QueryAsync<TicketExportResult>(
                 "select * from " + Configuration.TicketsTableName);
