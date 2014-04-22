@@ -7,14 +7,16 @@ namespace ZendeskTicketExporter.Core
     public class TicketRetriever : ITicketRetriever
     {
         private readonly IWait _wait;
+        private readonly Func<DateTime> _utcNowProvider;
         private readonly IZendeskApi _zendeskApi;
 
         private DateTime? _lastBatchRetrivedAt;
 
-        public TicketRetriever(IWait wait, IZendeskApi zendeskApi)
+        public TicketRetriever(IWait wait, IZendeskApi zendeskApi, Func<DateTime> utcNowProvider = null)
         {
             _wait = wait;
             _zendeskApi = zendeskApi;
+            _utcNowProvider = utcNowProvider ?? (() => DateTime.UtcNow);
         }
 
         public async Task<TicketExportResponse> GetBatchAsync(long? marker)
@@ -29,7 +31,7 @@ namespace ZendeskTicketExporter.Core
 
             var ticketsBatch = await _zendeskApi.IncrementalTicketExport(marker);
 
-            _lastBatchRetrivedAt = DateTime.UtcNow;
+            _lastBatchRetrivedAt = _utcNowProvider();
 
             return ticketsBatch;
         }
