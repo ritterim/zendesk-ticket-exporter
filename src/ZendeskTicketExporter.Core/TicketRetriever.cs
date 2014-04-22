@@ -1,108 +1,37 @@
-﻿using Common.Logging;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
+﻿using System;
 using System.Threading.Tasks;
 using ZendeskApi_v2.Models.Tickets;
-using ZendeskTicketExporter.Core.Extensions;
 
 namespace ZendeskTicketExporter.Core
 {
     public class TicketRetriever : ITicketRetriever
     {
-        private readonly string _siteName;
-        private readonly string _username;
-        private readonly string _apiToken;
-        private readonly ILog _log;
+        private readonly IWait _wait;
+        private readonly IZendeskApi _zendeskApi;
 
-        public DateTime? _lastBatchRetrivedAt;
+        private DateTime? _lastBatchRetrivedAt;
 
-        public TicketRetriever(string siteName, string username, string apiToken, ILog log)
+        public TicketRetriever(IWait wait, IZendeskApi zendeskApi)
         {
-            _siteName = siteName;
-            _username = username;
-            _apiToken = apiToken;
-            _log = log;
+            _wait = wait;
+            _zendeskApi = zendeskApi;
         }
 
-        public async Task<TicketExportResponse> GetBatch(long? marker)
+        public async Task<TicketExportResponse> GetBatchAsync(long? marker)
         {
             if (_lastBatchRetrivedAt.HasValue)
             {
                 var nextAllowedRequest = _lastBatchRetrivedAt.Value.Add(
                     Configuration.ZendeskRequiredCooloffBetweenIncrementalTicketExportResults);
 
-                await WaitUntil(nextAllowedRequest, marker);
+                await _wait.UntilAsync(nextAllowedRequest);
             }
 
-            var ticketsBatch = await GetTicketsBatch(marker);
+            var ticketsBatch = await _zendeskApi.IncrementalTicketExport(marker);
 
             _lastBatchRetrivedAt = DateTime.UtcNow;
 
             return ticketsBatch;
-        }
-
-        private async Task<TicketExportResponse> GetTicketsBatch(long? marker)
-        {
-            if (marker == null)
-            {
-                marker = 0;
-            }
-            else if (marker.Value.FromUnixTime() >= DateTime.UtcNow.Subtract(Configuration.ZendeskMinimumRequiredHistoricalMinutes))
-            {
-                return new TicketExportResponse()
-                {
-                    EndTime = marker.Value,
-                    Results = new List<TicketExportResult>(),
-                };
-            }
-
-            var handler = new HttpClientHandler()
-            {
-                Credentials = new NetworkCredential(_username + "/token", _apiToken)
-            };
-
-            using (var client = new HttpClient(handler))
-            {
-                client.BaseAddress = Configuration.GetZendeskApiUri(_siteName);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                var url = Configuration.GetZendeskIncrementalTicketExportUrl(marker.Value);
-                var response = await client.GetAsync(url);
-
-                try
-                {
-                    response.EnsureSuccessStatusCode();
-                }
-                catch (Exception ex)
-                {
-                    throw new ApplicationException(
-                        "A non-success status code was returned by Zendesk: " + ex.Message,
-                        ex);
-                }
-#if DEBUG
-                var stringResponse = await response.Content.ReadAsStringAsync();
-#endif
-                var ticketsBatch = await response.Content.ReadAsAsync<TicketExportResponse>();
-                return ticketsBatch;
-            }
-        }
-
-        private async Task WaitUntil(DateTime waitUntil, long? marker)
-        {
-            var timespanToWait = waitUntil.Subtract(DateTime.UtcNow);
-            if (timespanToWait.Ticks > 0)
-            {
-                _log.InfoFormat(
-                    "Waiting until {0} to get tickets for marker {1}",
-                    waitUntil.ToLocalTime().ToString(),
-                    marker.GetValueOrDefault());
-
-                await Task.Delay(timespanToWait);
-            }
         }
     }
 }

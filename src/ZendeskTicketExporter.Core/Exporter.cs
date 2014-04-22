@@ -41,12 +41,14 @@ namespace ZendeskTicketExporter.Core
             var log = LogManager.GetCurrentClassLogger();
             var dbFile = siteName + ".sqlite";
             var database = new Database(dbFile);
+            var wait = new Wait(log);
+            var zendeskApi = new ZendeskApi(siteName, username, apiToken, log);
 
             return new Exporter(
                 log,
                 database,
                 new SQLiteMarkerStorage(database),
-                new TicketRetriever(siteName, username, apiToken, log),
+                new TicketRetriever(wait, zendeskApi),
                 new SQLiteMergedTicketExporter(database),
                 new CsvFileWriter());
         }
@@ -61,7 +63,7 @@ namespace ZendeskTicketExporter.Core
             {
                 _log.InfoFormat("Begin copying tickets using marker {0}", marker.GetValueOrDefault());
 
-                var batch = await _ticketRetriever.GetBatch(marker);
+                var batch = await _ticketRetriever.GetBatchAsync(marker);
                 if (batch.Results.Any())
                 {
                     _log.InfoFormat(

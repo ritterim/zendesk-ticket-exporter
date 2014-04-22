@@ -42,7 +42,7 @@ namespace ZendeskTicketExporter.Core.Tests
         {
             Mock.Get(_markerStorage).Setup(x => x.GetCurrentMarker()).ReturnsAsync(null);
 
-            Mock.Get(_ticketRetriever).Setup(x => x.GetBatch(null)).ReturnsAsync(new TicketExportResponse()
+            Mock.Get(_ticketRetriever).Setup(x => x.GetBatchAsync(null)).ReturnsAsync(new TicketExportResponse()
             {
                 EndTime = 123,
                 Results = new List<TicketExportResult>()
@@ -51,7 +51,7 @@ namespace ZendeskTicketExporter.Core.Tests
                 },
             });
 
-            Mock.Get(_ticketRetriever).Setup(x => x.GetBatch(123)).ReturnsAsync(new TicketExportResponse()
+            Mock.Get(_ticketRetriever).Setup(x => x.GetBatchAsync(123)).ReturnsAsync(new TicketExportResponse()
             {
                 EndTime = 456,
                 Results = new List<TicketExportResult>(),
@@ -86,7 +86,7 @@ namespace ZendeskTicketExporter.Core.Tests
             await _sut.RefreshLocalCopyFromServer(newDatabase: false);
 
             Mock.Get(_ticketRetriever).Verify(
-                x => x.GetBatch(123),
+                x => x.GetBatchAsync(123),
                 Times.Once());
         }
 
@@ -113,7 +113,7 @@ namespace ZendeskTicketExporter.Core.Tests
         [Fact]
         public async Task RefreshLocalCopyFromServer_should_not_write_results_to_exporter_if_no_results()
         {
-            Mock.Get(_ticketRetriever).Setup(x => x.GetBatch(null)).ReturnsAsync(new TicketExportResponse()
+            Mock.Get(_ticketRetriever).Setup(x => x.GetBatchAsync(null)).ReturnsAsync(new TicketExportResponse()
             {
                 EndTime = 123,
                 Results = new List<TicketExportResult>(),
@@ -129,7 +129,7 @@ namespace ZendeskTicketExporter.Core.Tests
         [Fact]
         public void RefreshLocalCopyFromServer_should_terminate_loop_when_no_results()
         {
-            Mock.Get(_ticketRetriever).Setup(x => x.GetBatch(null)).ReturnsAsync(new TicketExportResponse()
+            Mock.Get(_ticketRetriever).Setup(x => x.GetBatchAsync(null)).ReturnsAsync(new TicketExportResponse()
             {
                 EndTime = 123,
                 Results = new List<TicketExportResult>(),
@@ -149,7 +149,7 @@ namespace ZendeskTicketExporter.Core.Tests
                 oneLessThanMaxResultsCollection.Add(new TicketExportResult());
             }
 
-            Mock.Get(_ticketRetriever).Setup(x => x.GetBatch(null)).ReturnsAsync(new TicketExportResponse()
+            Mock.Get(_ticketRetriever).Setup(x => x.GetBatchAsync(null)).ReturnsAsync(new TicketExportResponse()
             {
                 EndTime = 123,
                 Results = oneLessThanMaxResultsCollection,
@@ -169,7 +169,7 @@ namespace ZendeskTicketExporter.Core.Tests
                 maxPossibleResults.Add(new TicketExportResult());
             }
 
-            Mock.Get(_ticketRetriever).Setup(x => x.GetBatch(null)).ReturnsAsync(new TicketExportResponse()
+            Mock.Get(_ticketRetriever).Setup(x => x.GetBatchAsync(null)).ReturnsAsync(new TicketExportResponse()
             {
                 EndTime = 123,
                 Results = maxPossibleResults
@@ -177,8 +177,8 @@ namespace ZendeskTicketExporter.Core.Tests
 
             await _sut.RefreshLocalCopyFromServer(newDatabase: true);
 
-            Mock.Get(_ticketRetriever).Verify(x => x.GetBatch(null), Times.Once());
-            Mock.Get(_ticketRetriever).Verify(x => x.GetBatch(123), Times.Once());
+            Mock.Get(_ticketRetriever).Verify(x => x.GetBatchAsync(null), Times.Once());
+            Mock.Get(_ticketRetriever).Verify(x => x.GetBatchAsync(123), Times.Once());
         }
 
         [Fact]

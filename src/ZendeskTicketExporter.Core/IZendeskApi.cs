@@ -3,8 +3,8 @@ using ZendeskApi_v2.Models.Tickets;
 
 namespace ZendeskTicketExporter.Core
 {
-    public interface ITicketRetriever
+    public interface IZendeskApi
     {
-        Task<TicketExportResponse> GetBatchAsync(long? marker);
+        Task<TicketExportResponse> IncrementalTicketExport(long? marker);
     }
 }
