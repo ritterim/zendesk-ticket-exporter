@@ -42,7 +42,7 @@ namespace ZendeskTicketExporter.Core
             var dbFile = siteName + ".sqlite";
             var database = new Database(dbFile);
             var wait = new Wait(log);
-            var zendeskApi = new ZendeskApi(siteName, username, apiToken, log);
+            var zendeskApi = new ZendeskApi(siteName, username, apiToken);
 
             return new Exporter(
                 log,

@@ -1,9 +1,5 @@
-﻿using Common.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using ZendeskApi_v2.Models.Tickets;
 using ZendeskTicketExporter.Core.Extensions;
@@ -12,17 +8,15 @@ namespace ZendeskTicketExporter.Core
 {
     public class ZendeskApi : IZendeskApi
     {
-        private readonly string _siteName;
-        private readonly string _username;
-        private readonly string _apiToken;
-        private readonly ILog _log;
+        private readonly ZendeskApi_v2.ZendeskApi _api;
 
-        public ZendeskApi(string siteName, string username, string apiToken, ILog log)
+        public ZendeskApi(string siteName, string username, string apiToken)
         {
-            _siteName = siteName;
-            _username = username;
-            _apiToken = apiToken;
-            _log = log;
+            _api = new ZendeskApi_v2.ZendeskApi(
+                Configuration.GetZendeskApiUri(siteName).AbsoluteUri,
+                username,
+                password: "",
+                apiToken: apiToken);
         }
 
         public async Task<TicketExportResponse> IncrementalTicketExport(long? marker)
@@ -40,36 +34,8 @@ namespace ZendeskTicketExporter.Core
                 };
             }
 
-            var handler = new HttpClientHandler()
-            {
-                Credentials = new NetworkCredential(_username + "/token", _apiToken)
-            };
-
-            using (var client = new HttpClient(handler))
-            {
-                client.BaseAddress = Configuration.GetZendeskApiUri(_siteName);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                var url = Configuration.GetZendeskIncrementalTicketExportUrl(marker.Value);
-                var response = await client.GetAsync(url);
-
-                try
-                {
-                    response.EnsureSuccessStatusCode();
-                }
-                catch (Exception ex)
-                {
-                    throw new ApplicationException(
-                        "A non-success status code was returned by Zendesk: " + ex.Message,
-                        ex);
-                }
-#if DEBUG
-                var stringResponse = await response.Content.ReadAsStringAsync();
-#endif
-                var ticketsBatch = await response.Content.ReadAsAsync<TicketExportResponse>();
-                return ticketsBatch;
-            }
+            var response = await _api.Tickets.GetInrementalTicketExportAsync(marker.Value.FromUnixTime());
+            return response;
         }
     }
 }
