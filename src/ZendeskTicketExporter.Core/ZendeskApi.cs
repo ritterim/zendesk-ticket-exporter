@@ -10,10 +10,10 @@ namespace ZendeskTicketExporter.Core
     {
         private readonly ZendeskApi_v2.ZendeskApi _api;
 
-        public ZendeskApi(string siteName, string username, string apiToken)
+        public ZendeskApi(string sitename, string username, string apiToken)
         {
             _api = new ZendeskApi_v2.ZendeskApi(
-                Configuration.GetZendeskApiUri(siteName).AbsoluteUri,
+                Configuration.GetZendeskApiUri(sitename).AbsoluteUri,
                 username,
                 password: "",
                 apiToken: apiToken);

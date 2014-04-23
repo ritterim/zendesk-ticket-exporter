@@ -21,7 +21,7 @@ namespace ZendeskTicketExporter.Core
             if (timespanToWait.Ticks > 0)
             {
                 _log.InfoFormat(
-                    "Waiting until {0}",
+                    "Waiting until {0}.",
                     waitUntil.ToLocalTime().ToString());
 
                 await Task.Delay(timespanToWait);

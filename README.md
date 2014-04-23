@@ -1,7 +1,7 @@
 ZenDesk Ticket Incremental Exporter
 ===================================
 
-A Windows console application for keeping a local copy of your [Zendesk](http://www.zendesk.com/) tickets updated in an application managed SQLite database, with optional export to csv.
+A Windows console application for keeping a local copy of your [Zendesk](http://www.zendesk.com/) tickets updated in an application-managed SQLite database, with optional export to csv.
 
 Prerequisites
 -------------
@@ -44,11 +44,11 @@ $csvOutputPath = "\\machinename\sharename\$timestamp-utc.csv"
 Options:
 --------
 ```
--s, --sitename                     Required. Site name for accessing Zendesk
-                                   API (https://[your-site-name].zendesk.com)
+-s, --sitename                     Required. Sitename for accessing Zendesk
+                                   API (https://[your-site-name].zendesk.com).
 
 -u, --username                     Required. Username for accessing Zendesk
-                                   API (do not include "/token")
+                                   API (do not include "/token").
 
 -t, --token                        Required. API token for accessing Zendesk
                                    API. You can enable and view this at
@@ -63,7 +63,7 @@ Options:
 -e, --export-csv-file              Path to CVS export file, if not specified
                                    no CSV export will be performed.
 
--o, --export-csv-file-overwrite    Permit overwriting of export-csv-file
+-o, --export-csv-file-overwrite    Permit overwriting of export-csv-file.
 
--q, --quiet                        Suppress console logging output
+-q, --quiet                        Suppress console logging output.
 ```
