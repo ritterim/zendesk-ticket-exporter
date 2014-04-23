@@ -32,17 +32,17 @@ namespace ZendeskTicketExporter.Core
             _csvFileWriter = csvFileWriter;
         }
 
-        public static Exporter GetDefaultInstance(string siteName, string username, string apiToken)
+        public static Exporter GetDefaultInstance(string sitename, string username, string apiToken)
         {
-            Guard.AgainstNullArgument("siteName", siteName);
+            Guard.AgainstNullArgument("sitename", sitename);
             Guard.AgainstNullArgument("username", username);
             Guard.AgainstNullArgument("apiToken", apiToken);
 
             var log = LogManager.GetCurrentClassLogger();
-            var dbFile = siteName + ".sqlite";
+            var dbFile = sitename + ".sqlite";
             var database = new Database(dbFile);
             var wait = new Wait(log);
-            var zendeskApi = new ZendeskApi(siteName, username, apiToken, log);
+            var zendeskApi = new ZendeskApi(sitename, username, apiToken, log);
 
             return new Exporter(
                 log,
@@ -61,13 +61,13 @@ namespace ZendeskTicketExporter.Core
 
             while (true)
             {
-                _log.InfoFormat("Begin copying tickets using marker {0}", marker.GetValueOrDefault());
+                _log.InfoFormat("Begin copying tickets using marker {0}.", marker.GetValueOrDefault());
 
                 var batch = await _ticketRetriever.GetBatchAsync(marker);
                 if (batch.Results.Any())
                 {
                     _log.InfoFormat(
-                        "Inserting / updating {0} tickets in database retrieved from marker {1}",
+                        "Inserting / updating {0} tickets in database retrieved from marker {1}.",
                         batch.Results.Count(),
                         marker.GetValueOrDefault());
 
@@ -92,7 +92,7 @@ namespace ZendeskTicketExporter.Core
         {
             Guard.AgainstNullArgument("csvFilePath", csvFilePath);
 
-            _log.Info("Writing tickets to csv file from local database");
+            _log.Info("Writing tickets to csv file from local database.");
 
             var records = await _database.QueryAsync<TicketExportResult>(
                 "select * from " + Configuration.TicketsTableName);

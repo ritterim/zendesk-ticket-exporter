@@ -57,7 +57,7 @@ namespace ZendeskTicketExporter.Core
             {
                 // Adapted from http://stackoverflow.com/a/1604121/941536
                 var results = await conn.QueryAsync<long>(string.Format(
-                    "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='{0}'",
+                    "select count(*) from sqlite_master where type='table' and name='{0}'",
                     tableName));
 
                 return results.First() > 0;

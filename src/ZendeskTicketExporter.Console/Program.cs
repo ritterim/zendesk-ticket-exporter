@@ -11,11 +11,11 @@ namespace ZendeskTicketExporter.Console
     internal class Options
     {
         [Option('s', "sitename", Required = true,
-            HelpText = "Site name for accessing Zendesk API (https://[your-site-name].zendesk.com)")]
-        public string SiteName { get; set; }
+            HelpText = "Sitename for accessing Zendesk API (https://[your-site-name].zendesk.com).")]
+        public string Sitename { get; set; }
 
         [Option('u', "username", Required = true,
-            HelpText = "Username for accessing Zendesk API (do not include \"/token\")")]
+            HelpText = "Username for accessing Zendesk API (do not include \"/token\").")]
         public string Username { get; set; }
 
         [Option('t', "token", Required = true,
@@ -31,11 +31,11 @@ namespace ZendeskTicketExporter.Console
         public string CsvExportPath { get; set; }
 
         [Option('o', "export-csv-file-overwrite", Required = false,
-            HelpText = "Permit overwriting of export-csv-file")]
+            HelpText = "Permit overwriting of export-csv-file.")]
         public bool CsvExportPathPermitOverwrite { get; set; }
 
         [Option('q', "quiet", Required = false,
-            HelpText = "Suppress console logging output")]
+            HelpText = "Suppress console logging output.")]
         public bool Quiet { get; set; }
     }
 
@@ -49,7 +49,7 @@ namespace ZendeskTicketExporter.Console
                 ConfigureLogging(options);
 
                 var exporter = Exporter.GetDefaultInstance(
-                    options.SiteName,
+                    options.Sitename,
                     options.Username,
                     options.ApiToken);
 
