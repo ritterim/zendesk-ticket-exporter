@@ -7,6 +7,13 @@ Prerequisites
 -------------
 - .NET Framework 4.5.1 installed.
 
+Download and install
+--------------------
+
+We use GitHub releases to distribute this application. **[View the latest release](https://github.com/ritterim/zendesk-ticket-exporter/releases/latest).**
+
+Extract the contents of the .zip file to a location of your choice, which will include `ZendeskTicketExporter.Console.exe`.
+
 Example usages:
 ---------------
 Create a new local copy:
