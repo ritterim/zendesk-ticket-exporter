@@ -87,7 +87,7 @@ namespace ZendeskTicketExporter.Core
 
         private static string GetAttachmentValue(Attachment attachment)
         {
-            return string.Format("Id:{0}{1}ContentType:{2}{1}ContentUrl:{3}{1}FileName:{4}{1}Size:{5}{1}", attachment.Id, Delimiter, attachment.ContentType, attachment.ContentUrl, attachment.FileName, attachment.Size) ;// disregard thumbnails
+            return string.Format("Id:{0}{1}ContentType:{2}{1}ContentUrl:{3}{1}FileName:{4}{1}Size:{5}{1}", attachment.Id, Delimiter, attachment.ContentType, attachment.ContentUrl, attachment.FileName, attachment.Size);// disregard thumbnails
         }
     }
 }

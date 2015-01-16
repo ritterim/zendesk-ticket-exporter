@@ -100,10 +100,10 @@
     <Compile Include="SinglePropertyPerColumnExporter.cs" />
     <Compile Include="SQLiteMarkerStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SqLiteMergedTicketExportResultExporter.cs" />
+    <Compile Include="SqLiteMergedTicketExportResult.cs" />
     <Compile Include="TicketResultFlattened.cs" />
     <Compile Include="TicketExporter.cs" />
-    <Compile Include="TicketExportResultExporter.cs" />
+    <Compile Include="Exporter.cs" />
     <Compile Include="TicketRetriever.cs" />
     <Compile Include="Wait.cs" />
     <Compile Include="ZendeskApi.cs" />

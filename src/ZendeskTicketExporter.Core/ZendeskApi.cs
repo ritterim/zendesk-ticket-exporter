@@ -7,11 +7,11 @@ using ZendeskTicketExporter.Core.Extensions;
 
 namespace ZendeskTicketExporter.Core
 {
-    public class ZendeskApi2 : IZendeskApi
+    public class ZendeskApi : IZendeskApi
     {
         private readonly ZendeskApi_v2.ZendeskApi _api;
 
-        public ZendeskApi2(string sitename, string username, string apiToken, string password = "")
+        public ZendeskApi(string sitename, string username, string apiToken, string password = "")
         {
             _api = new ZendeskApi_v2.ZendeskApi(
                 Configuration.GetZendeskApiUri(sitename).AbsoluteUri,
@@ -41,16 +41,13 @@ namespace ZendeskTicketExporter.Core
 
         public async Task<SearchResults> SearchFor(int page)
         {
+            // Returns all tickets including those are closed. Allowing for a full export. This is the crucial bit as the current website portal doesn't allow for this.
+            const string searchQuery = "type:ticket%20status>=closed";
             if (page == 0)
             {
-                var response = await _api.Search.SearchForAsync("type:ticket%20status>=closed");
-                return response;
+                return await _api.Search.SearchForAsync(searchQuery);
             }
-            else
-            {
-                var response = await _api.Search.SearchForAsync("type:ticket%20status>=closed", null, null, page);
-                return response;
-            }
+            return await _api.Search.SearchForAsync(searchQuery, null, null, page);
         }
     }
 }

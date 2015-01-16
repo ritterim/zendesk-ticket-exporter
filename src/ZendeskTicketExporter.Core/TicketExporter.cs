@@ -2,16 +2,17 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Common.Logging;
+using ZendeskApi_v2.Models.Search;
 
 namespace ZendeskTicketExporter.Core
 {
     /// <summary>
-    /// Uses the Tickets.GetAllTicketsAsync() API method
+    /// Uses the SearchFor() API method
     /// </summary>
     public class TicketExporter : ExporterBase<TicketResultFlattened>
     {
         private readonly SinglePropertyPerColumnExporter _exporter;
-        protected static string TableName = "Ticket"; 
+        protected static string TableName =typeof(Result).Name; 
 
         public TicketExporter(ILog log, IDatabase database,  ITicketRetriever ticketRetriever, SinglePropertyPerColumnExporter exporter, ICsvFileWriter csvFileWriter)
             : base(log, database, ticketRetriever, csvFileWriter, TableName)
@@ -26,14 +27,14 @@ namespace ZendeskTicketExporter.Core
             var log = LogManager.GetCurrentClassLogger();
             var database = new Database(sitename + ".sqlite");
             var wait = new Wait(log);
-            var zendeskApi = new ZendeskApi2(sitename, username, apiToken);
+            var zendeskApi = new ZendeskApi(sitename, username, apiToken);
 
             return new TicketExporter(log, database,  new TicketRetriever(wait, zendeskApi), new SinglePropertyPerColumnExporter(database, TableName), new CsvFileWriter());
         }
 
         /// <summary>
         /// This is to help ensure compliance with Zendesk API guidelines
-        /// for not retriving all records all the time.
+        /// for not retrieving all records all the time.
         /// This should force clients to run once with newDatabase = 'true',
         /// then subsequent runs must be newDatabase = 'false' to avoid
         /// potential issues with an unexpected missing database.
@@ -75,11 +76,6 @@ namespace ZendeskTicketExporter.Core
             }
 
             _log.Info("Completed copying tickets.");
-        }
-
-        private static string PageForDisplay(string page)
-        {
-            return string.IsNullOrEmpty(page) ? "1" : page.Substring(page.IndexOf("page=", StringComparison.Ordinal) + "page=".Length);
         }
     }
 }

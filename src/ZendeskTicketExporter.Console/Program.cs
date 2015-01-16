@@ -20,7 +20,7 @@ namespace ZendeskTicketExporter.Console
                 switch (options.Method)
                 {
                     case false:
-                        exporter = TicketExportResultExporter.GetDefaultInstance(options.Sitename, options.Username, options.ApiToken);
+                        exporter = Exporter.GetDefaultInstance(options.Sitename, options.Username, options.ApiToken);
                         break;
                     case true:
                         exporter = TicketExporter.GetDefaultInstance(options.Sitename, options.Username, options.ApiToken);

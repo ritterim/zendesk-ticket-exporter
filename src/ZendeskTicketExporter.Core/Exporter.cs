@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Common.Logging;
-using LiteGuard;
 using ZendeskApi_v2.Models.Tickets;
 
 namespace ZendeskTicketExporter.Core
@@ -10,20 +9,20 @@ namespace ZendeskTicketExporter.Core
     /// <summary>
     /// Concrete implementation for an exporter which uses TicketExportResult
     /// </summary>
-    public sealed class TicketExportResultExporter : ExporterBase<TicketExportResult>
+    public sealed class Exporter : ExporterBase<TicketExportResult>
     {
         private readonly IMarkerStorage _markerStorage;
-        private readonly SqLiteMergedTicketExportResultExporter _exporter;
-        public static readonly string TicketsTableName = "tickets";
+        private readonly SqLiteMergedTicketExportResult _exporter;
+        public static readonly string tableName = typeof(TicketExportResult).Name;
 
-        public TicketExportResultExporter(ILog log, IDatabase database, IMarkerStorage markerStorage,
-            ITicketRetriever ticketRetriever, SqLiteMergedTicketExportResultExporter exporter,
+        public Exporter(ILog log, IDatabase database, IMarkerStorage markerStorage,
+            ITicketRetriever ticketRetriever, SqLiteMergedTicketExportResult exporter,
             ICsvFileWriter csvFileWriter)
             : base(log,
                 database,
                 ticketRetriever,
                 csvFileWriter,
-                TicketsTableName)
+                tableName)
         {
             _markerStorage = markerStorage;
             _exporter = exporter;
@@ -37,10 +36,10 @@ namespace ZendeskTicketExporter.Core
             var log = LogManager.GetCurrentClassLogger();
             var database = new Database(sitename + ".sqlite");
             var wait = new Wait(log);
-            var zendeskApi = new ZendeskApi2(sitename, username, apiToken);
-            return new TicketExportResultExporter(log, database, new SQLiteMarkerStorage(database),
+            var zendeskApi = new ZendeskApi(sitename, username, apiToken);
+            return new Exporter(log, database, new SQLiteMarkerStorage(database),
                 new TicketRetriever(wait, zendeskApi),
-                new SqLiteMergedTicketExportResultExporter(database, TicketsTableName),
+                new SqLiteMergedTicketExportResult(database, tableName),
                 new CsvFileWriter());
         }
 

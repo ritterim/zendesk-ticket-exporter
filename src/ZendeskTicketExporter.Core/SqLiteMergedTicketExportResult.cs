@@ -11,9 +11,9 @@ namespace ZendeskTicketExporter.Core
     /// TicketExportResult Does not contain complex object properties or IList properties so this original implementation
     /// works
     /// </summary>
-    public class SqLiteMergedTicketExportResultExporter : MergedTicketExporterBase<TicketExportResult>
+    public class SqLiteMergedTicketExportResult : MergedTicketExporterBase<TicketExportResult>
     {
-        public SqLiteMergedTicketExportResultExporter(IDatabase database, string tableName)
+        public SqLiteMergedTicketExportResult(IDatabase database, string tableName)
             : base(database, tableName)
         {
         }
