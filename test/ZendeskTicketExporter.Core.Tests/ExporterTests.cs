@@ -16,9 +16,9 @@ namespace ZendeskTicketExporter.Core.Tests
         private readonly IDatabase _database;
         private readonly IMarkerStorage _markerStorage;
         private readonly ITicketRetriever _ticketRetriever;
-        private readonly IMergedTicketExporter _mergeExporter;
+        private readonly IMergedTicketExporter<TicketExportResponse> _mergeExporter;
         private readonly ICsvFileWriter _csvFileWriter;
-        private readonly Exporter _sut;
+        private readonly TicketExportResultExporter _sut;
 
         public ExporterTests()
         {
@@ -26,10 +26,10 @@ namespace ZendeskTicketExporter.Core.Tests
             _database = Mock.Of<IDatabase>();
             _markerStorage = Mock.Of<IMarkerStorage>();
             _ticketRetriever = Mock.Of<ITicketRetriever>();
-            _mergeExporter = Mock.Of<IMergedTicketExporter>();
+            _mergeExporter = Mock.Of<IMergedTicketExporter<TicketExportResponse>>();
             _csvFileWriter = Mock.Of<ICsvFileWriter>();
 
-            _sut = new Exporter(_log, _database, _markerStorage, _ticketRetriever, _mergeExporter, _csvFileWriter);
+            _sut = new SqLiteMergedTicketExportResultExporter(_log, _database, _markerStorage, _ticketRetriever, _mergeExporter, _csvFileWriter);
 
             SetupDefaultMocks();
         }
@@ -188,7 +188,7 @@ namespace ZendeskTicketExporter.Core.Tests
 
             Mock.Get(_database).Verify(
                 x => x.QueryAsync<TicketExportResult>(
-                    "select * from " + Configuration.TicketsTableName,
+                    "select * from " + TicketExportResultExporter.TicketsTableName,
                     /* param */ null),
                 Times.Once());
         }
@@ -203,7 +203,7 @@ namespace ZendeskTicketExporter.Core.Tests
 
             Mock.Get(_database)
                 .Setup(x => x.QueryAsync<TicketExportResult>(
-                    "select * from " + Configuration.TicketsTableName,
+                    "select * from " + TicketExportResultExporter.TicketsTableName,
                     /* param */ null))
                 .ReturnsAsync(records);
 

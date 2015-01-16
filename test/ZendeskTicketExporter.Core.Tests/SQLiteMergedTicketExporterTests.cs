@@ -8,12 +8,12 @@ namespace ZendeskTicketExporter.Core.Tests
     public class SQLiteMergedTicketExporterTests
     {
         private readonly InMemoryDatabase _database;
-        private readonly SQLiteMergedTicketExporter _sut;
+        private readonly SqLiteMergedTicketExportResultExporter _sut;
 
         public SQLiteMergedTicketExporterTests()
         {
             _database = new InMemoryDatabase();
-            _sut = new SQLiteMergedTicketExporter(_database);
+            _sut = new SqLiteMergedTicketExportResultExporter(_database);
         }
 
         [Fact]
@@ -50,7 +50,7 @@ namespace ZendeskTicketExporter.Core.Tests
         private async Task AssertRecordCountIs(long count)
         {
             var actual = await _database.QueryScalerAsync<long>(
-                "select count(*) from " + Configuration.TicketsTableName);
+                "select count(*) from " + TicketExportResultExporter.TicketsTableName);
 
             Assert.Equal(count, actual);
         }

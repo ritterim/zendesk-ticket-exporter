@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using ZendeskApi_v2.Models.Search;
 using ZendeskApi_v2.Models.Tickets;
 
 namespace ZendeskTicketExporter.Core
@@ -10,7 +11,7 @@ namespace ZendeskTicketExporter.Core
         private readonly Func<DateTime> _utcNowProvider;
         private readonly IZendeskApi _zendeskApi;
 
-        private DateTime? _lastBatchRetrivedAt;
+        private DateTime? _lastBatchRetrievedAt;
 
         public TicketRetriever(IWait wait, IZendeskApi zendeskApi, Func<DateTime> utcNowProvider = null)
         {
@@ -21,9 +22,9 @@ namespace ZendeskTicketExporter.Core
 
         public async Task<TicketExportResponse> GetBatchAsync(long? marker)
         {
-            if (_lastBatchRetrivedAt.HasValue)
+            if (_lastBatchRetrievedAt.HasValue)
             {
-                var nextAllowedRequest = _lastBatchRetrivedAt.Value.Add(
+                var nextAllowedRequest = _lastBatchRetrievedAt.Value.Add(
                     Configuration.ZendeskRequiredCooloffBetweenIncrementalTicketExportResults);
 
                 await _wait.UntilAsync(nextAllowedRequest);
@@ -31,8 +32,14 @@ namespace ZendeskTicketExporter.Core
 
             var ticketsBatch = await _zendeskApi.IncrementalTicketExport(marker);
 
-            _lastBatchRetrivedAt = _utcNowProvider();
+            _lastBatchRetrievedAt = _utcNowProvider();
 
+            return ticketsBatch;
+        }
+
+        public async Task<SearchResults> SearchFor(int page)
+        {
+            var ticketsBatch = await _zendeskApi.SearchFor(page);
             return ticketsBatch;
         }
     }
