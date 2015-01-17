@@ -13,8 +13,8 @@ namespace ZendeskTicketExporter.Core
     /// </summary>
     public class SqLiteMergedTicketExporter : MergedTicketExporterBase<TicketExportResult>
     {
-        public SqLiteMergedTicketExporter(IDatabase database, string tableName)
-            : base(database, tableName)
+        public SqLiteMergedTicketExporter(IDatabase database)
+            : base(database)
         {
         }
 
@@ -24,7 +24,7 @@ namespace ZendeskTicketExporter.Core
 
             await _database.ExecuteAsync(string.Format(
                 "create table if not exists {0} ({1}, primary key (Id));",
-                _tableName,
+                TableName,
                 string.Join(", ", TicketProperties.Select(x => x.Name))));
 
             foreach (var ticket in tickets)
@@ -35,7 +35,7 @@ namespace ZendeskTicketExporter.Core
 
                 await _database.ExecuteAsync(
                     string.Format("insert or replace into {0} ({1}) values ({2})",
-                        _tableName,
+                        TableName,
                         string.Join(", ", TicketProperties.Select(x => x.Name)),
                         string.Join(", ", TicketProperties.Select(x => "@" + x.Name))),
                     insertParams);

@@ -13,7 +13,7 @@ namespace ZendeskTicketExporter.Core
     {
         private readonly IMarkerStorage _markerStorage;
         private readonly IMergedTicketExporter<TicketExportResult> _exporter;
-        public static readonly string TableName = typeof(TicketExportResult).Name;
+
 
         public Exporter(ILog log, IDatabase database, IMarkerStorage markerStorage,
             ITicketRetriever ticketRetriever, IMergedTicketExporter<TicketExportResult> exporter,
@@ -21,8 +21,8 @@ namespace ZendeskTicketExporter.Core
             : base(log,
                 database,
                 ticketRetriever,
-                csvFileWriter,
-                TableName)
+                csvFileWriter
+                )
         {
             _markerStorage = markerStorage;
             _exporter = exporter;
@@ -39,7 +39,7 @@ namespace ZendeskTicketExporter.Core
             var zendeskApi = new ZendeskApi(sitename, username, apiToken);
             return new Exporter(log, database, new SQLiteMarkerStorage(database),
                 new TicketRetriever(wait, zendeskApi),
-                new SqLiteMergedTicketExporter(database, TableName),
+                new SqLiteMergedTicketExporter(database),
                 new CsvFileWriter());
         }
 

@@ -1,7 +1,7 @@
 namespace ZendeskTicketExporter.Core
 {
     /// <summary>
-    /// A version of ZendeskApi_v2.Models.Tickets.Ticket which has had lists flattened to strings
+    /// A version of ZendeskApi_v2.Models.Search.Result which has had lists flattened to strings
     /// </summary>
     public class TicketResultFlattened
     {
@@ -60,6 +60,24 @@ namespace ZendeskTicketExporter.Core
         public long? AssigneeId { get; set; }
 
         public string Status { get; set; }
-  }
+
+        public long? BrandId { get; set; }
+
+        public string DueAt { get; set; }
+
+        public string FollowUpIds { get; set; }
+
+        public long? ForumTopicId { get; set; }
+
+        public bool HasIncidents { get; set; }
+
+        public long? ProblemId { get; set; }
+
+        public string RawSubject { get; set; }
+
+        public string Recipient { get; set; }
+
+        public string SatisfactionRating { get; set; }
+    }
 }
 

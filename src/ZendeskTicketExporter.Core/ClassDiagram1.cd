@@ -11,7 +11,7 @@
   <Class Name="ZendeskTicketExporter.Core.ExporterBase&lt;T&gt;">
     <Position X="3.5" Y="2.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAEAAAACAAAAAQAAAAAQgAAgAAAAACIA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAEAAAACAAAAAQAAAAAQgAAgAAQAACAA=</HashCode>
       <FileName>ExporterBase.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -41,7 +41,7 @@
   <Class Name="ZendeskTicketExporter.Core.TicketExporter">
     <Position X="1.5" Y="6.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAEAAACAAAAAEAAAEAAAAAAAAQAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAEAAACAAAAAEAAAEAAAAAAAAAAAAAA=</HashCode>
       <FileName>TicketExporter.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -56,7 +56,7 @@
       </Path>
     </InheritanceLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAEAAAiAAAAAEAAAEAAAAAAAAQAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAEAAAiAAAAAEAAAEAAAAAAAAAAAAAA=</HashCode>
       <FileName>Exporter.cs</FileName>
     </TypeIdentifier>
   </Class>

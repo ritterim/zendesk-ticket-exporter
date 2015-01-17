@@ -188,7 +188,7 @@ namespace ZendeskTicketExporter.Core.Tests
 
             Mock.Get(_database).Verify(
                 x => x.QueryAsync<TicketExportResult>(
-                    "select * from " + Exporter.TableName,
+                    "select * from " + _mergeExporter.TableName,
                     /* param */ null),
                 Times.Once());
         }
@@ -203,7 +203,7 @@ namespace ZendeskTicketExporter.Core.Tests
 
             Mock.Get(_database)
                 .Setup(x => x.QueryAsync<TicketExportResult>(
-                    "select * from " + Exporter.TableName,
+                    "select * from " + _mergeExporter.TableName,
                     /* param */ null))
                 .ReturnsAsync(records);
 

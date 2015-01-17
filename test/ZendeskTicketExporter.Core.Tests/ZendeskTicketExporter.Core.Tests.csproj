@@ -93,6 +93,7 @@
     <Compile Include="InMemoryDatabase.cs" />
     <Compile Include="InMemorySQLiteConnection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SinglePropertyPerColumnExporterTests.cs" />
     <Compile Include="SQLiteMarkerStorageTests.cs" />
     <Compile Include="SQLiteMergedTicketExporterTests.cs" />
     <Compile Include="TicketRetrieverTests.cs" />

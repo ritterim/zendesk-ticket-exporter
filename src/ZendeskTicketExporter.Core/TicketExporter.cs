@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common.Logging;
@@ -10,13 +9,13 @@ namespace ZendeskTicketExporter.Core
     /// <summary>
     /// Uses the SearchFor() API method
     /// </summary>
-    public class TicketExporter : ExporterBase<dynamic> //TicketResultFlattened
+    public class TicketExporter : ExporterBase<TicketResultFlattened>
     {
         private readonly SinglePropertyPerColumnExporter _exporter;
-        protected static string TableName = typeof(Result).Name;
+       // protected static string TableName = typeof(Result).Name;
 
         public TicketExporter(ILog log, IDatabase database, ITicketRetriever ticketRetriever, SinglePropertyPerColumnExporter exporter, ICsvFileWriter csvFileWriter)
-            : base(log, database, ticketRetriever, csvFileWriter, TableName)
+            : base(log, database, ticketRetriever, csvFileWriter)
         {
             _exporter = exporter;
         }
@@ -30,7 +29,7 @@ namespace ZendeskTicketExporter.Core
             var wait = new Wait(log);
             var zendeskApi = new ZendeskApi(sitename, username, apiToken);
 
-            return new TicketExporter(log, database, new TicketRetriever(wait, zendeskApi), new SinglePropertyPerColumnExporter(database, TableName), new CsvFileWriter());
+            return new TicketExporter(log, database, new TicketRetriever(wait, zendeskApi), new SinglePropertyPerColumnExporter(database), new CsvFileWriter());
         }
 
         /// <summary>

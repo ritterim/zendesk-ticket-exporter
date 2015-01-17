@@ -11,15 +11,15 @@ namespace ZendeskTicketExporter.Core
 {
     /// <summary>
     /// This strategy avoids the problem over encountering a situtaion where one row may have more columns than the rest,
-    /// e.g. if CollaboratorIds is empty in the first row, and then has values in the secnod, we would ned to dynamically generate columns
+    /// e.g. if CollaboratorIds is empty in the first row, and then has values in the second, we would ned to dynamically generate columns
     /// Arrays in columns are packed into a single column and pip delimited
     /// </summary>
     public class SinglePropertyPerColumnExporter : MergedTicketExporterBase<Result>
     {
         private const string Delimiter = "|";
 
-        public SinglePropertyPerColumnExporter(IDatabase database, string tableName)
-            : base(database, tableName)
+        public SinglePropertyPerColumnExporter(IDatabase database)
+            : base(database)
         {
             // since potentially different schemas could be used for the same table name, we nuke the table each time we use it
             DropTable();
@@ -60,6 +60,22 @@ namespace ZendeskTicketExporter.Core
                         continue;
                     }
 
+                    //Handle 'FollowUpIds' and 'SharingAgreementIds' properties
+                    var longlist = value as IList<long>;
+                    if (longlist != null)
+                    {
+                        insertParams.Add(property.Name, string.Join(Delimiter, longlist));
+                        continue;
+                    }
+
+                    //Handle 'SatisfactionRating' property
+                    var satisfactionRating = value as SatisfactionRating;
+                    if (satisfactionRating != null)
+                    {
+                        insertParams.Add(property.Name, string.Format("{0}{1}{2}", satisfactionRating.Comment, Delimiter, satisfactionRating.Score));
+                        continue;
+                    }
+
                     //Handle 'Via' property
                     var via = value as Via;
                     if (via != null)
@@ -74,11 +90,11 @@ namespace ZendeskTicketExporter.Core
 
                 await
                     _database.ExecuteAsync(string.Format("create table if not exists {0} ({1}, primary key (Id));",
-                        _tableName, string.Join(", ", insertParams.ParameterNames)));
+                        TableName, string.Join(", ", insertParams.ParameterNames)));
 
                 await _database.ExecuteAsync(
                     string.Format("insert or replace into {0} ({1}) values ({2})",
-                        _tableName,
+                        TableName,
                         string.Join(", ", insertParams.ParameterNames),
                         string.Join(", ", insertParams.ParameterNames.Select(x => "@" + x))),
                     insertParams);

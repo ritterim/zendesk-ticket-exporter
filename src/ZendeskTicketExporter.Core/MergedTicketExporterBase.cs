@@ -12,19 +12,22 @@ namespace ZendeskTicketExporter.Core
     {
         protected static readonly PropertyInfo[] TicketProperties = typeof(TTicketResult).GetProperties();
         protected readonly IDatabase _database;
-        protected readonly string _tableName;
+        public string TableName
+        {
+            get { return (typeof (TTicketResult).Name); }
+        }
 
-        protected MergedTicketExporterBase(IDatabase database, string tableName)
+        protected MergedTicketExporterBase(IDatabase database)
         {
             _database = database;
-            _tableName = tableName;
+         //   _tableName = tableName;
         }
 
         public abstract Task WriteAsync(IEnumerable<TTicketResult> tickets);
 
         protected void DropTable()
         {
-            _database.DropTable(_tableName);
+            _database.DropTable(typeof(TTicketResult).Name);
         }
     }
 }
