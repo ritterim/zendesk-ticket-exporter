@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Common.Logging;
-using ZendeskApi_v2.Models.Search;
 
 namespace ZendeskTicketExporter.Core
 {

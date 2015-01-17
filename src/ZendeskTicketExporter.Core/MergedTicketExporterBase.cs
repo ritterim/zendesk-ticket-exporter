@@ -20,7 +20,6 @@ namespace ZendeskTicketExporter.Core
         protected MergedTicketExporterBase(IDatabase database)
         {
             _database = database;
-         //   _tableName = tableName;
         }
 
         public abstract Task WriteAsync(IEnumerable<TTicketResult> tickets);
