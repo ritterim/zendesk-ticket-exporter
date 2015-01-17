@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using ZendeskApi_v2.Models.Tickets;
 
 namespace ZendeskTicketExporter.Core
 {
-    public interface IMergedTicketExporter
+    public interface IMergedTicketExporter<T> where T : new()
     {
-        Task WriteAsync(IEnumerable<TicketExportResult> tickets);
+        Task WriteAsync(IEnumerable<T> tickets);
+          string TableName { get; }
     }
 }

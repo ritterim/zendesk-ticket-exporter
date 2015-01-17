@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZendeskTicketExporter.Core", "src\ZendeskTicketExporter.Core\ZendeskTicketExporter.Core.csproj", "{60AA5879-B8D1-4289-AD5A-15B87AB1E221}"
 EndProject
@@ -10,6 +10,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZendeskTicketExporter.Core.Tests", "test\ZendeskTicketExporter.Core.Tests\ZendeskTicketExporter.Core.Tests.csproj", "{02B44DA8-7149-407B-B588-0BDC1E5CD9A1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZendeskTicketExporter.Console", "src\ZendeskTicketExporter.Console\ZendeskTicketExporter.Console.csproj", "{F741E397-224B-4D1A-87CB-1B89D8538462}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{317CEBCC-89BC-4AA7-A6AA-CF948C7973A3}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

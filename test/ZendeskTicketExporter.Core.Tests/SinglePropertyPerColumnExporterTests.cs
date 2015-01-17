@@ -1,27 +1,27 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
-using ZendeskApi_v2.Models.Tickets;
+using ZendeskApi_v2.Models.Search;
 
 namespace ZendeskTicketExporter.Core.Tests
 {
-    public class SQLiteMergedTicketExporterTests
+    public class SinglePropertyPerColumnExporterTests
     {
         private readonly InMemoryDatabase _database;
-        private readonly SqLiteMergedTicketExporter _sut;
+        private readonly SinglePropertyPerColumnExporter _sut;
 
-        public SQLiteMergedTicketExporterTests()
+        public SinglePropertyPerColumnExporterTests()
         {
             _database = new InMemoryDatabase();
-            _sut = new SqLiteMergedTicketExporter(_database);
+            _sut = new SinglePropertyPerColumnExporter(_database);
         }
 
         [Fact]
         public async Task WriteAsync_creates_table_if_not_exists()
         {
-            var tickets = new List<TicketExportResult>()
+            IEnumerable<Result> tickets = new List<Result>()
             {
-                new TicketExportResult() {Id = 1}
+                new Result() { Id = 1 }
             };
 
             await _sut.WriteAsync(tickets);
@@ -32,13 +32,13 @@ namespace ZendeskTicketExporter.Core.Tests
         [Fact]
         public async Task WriteAsync_inserts_records_twice()
         {
-            var tickets = new List<TicketExportResult>()
+            var tickets = new List<Result>()
             {
-                new TicketExportResult() {Id=1}
+                new Result() { Id = 1 }
             };
-            var tickets2 = new List<TicketExportResult>()
+            var tickets2 = new List<Result>()
             {
-                new TicketExportResult() {Id=2}
+                new Result() { Id = 2 }
             };
 
             await _sut.WriteAsync(tickets);
@@ -55,6 +55,4 @@ namespace ZendeskTicketExporter.Core.Tests
             Assert.Equal(count, actual);
         }
     }
-
-  
 }

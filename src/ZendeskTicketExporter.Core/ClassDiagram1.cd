@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ZendeskTicketExporter.Core.TicketRetriever">
+    <Position X="16.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAAAAAAAQAAAAAkAAACAAAAAAAAgAAAA=</HashCode>
+      <FileName>TicketRetriever.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ZendeskTicketExporter.Core.ExporterBase&lt;T&gt;">
+    <Position X="3.5" Y="2.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAACAAAAAQAAAAAQgAAgAAQAACAA=</HashCode>
+      <FileName>ExporterBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ZendeskTicketExporter.Core.SinglePropertyPerColumnExporter">
+    <Position X="9" Y="6.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAAAAAAAAEAAAIAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SinglePropertyPerColumnExporter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ZendeskTicketExporter.Core.SqLiteMergedTicketExporter">
+    <Position X="12.5" Y="6.25" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SqLiteMergedTicketExporter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ZendeskTicketExporter.Core.MergedTicketExporterBase&lt;TTicketResult&gt;" Collapsed="true">
+    <Position X="10.75" Y="4.25" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAAAAAAQAAAAAIAQAAAAAAAAAAIA=</HashCode>
+      <FileName>MergedTicketExporterBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ZendeskTicketExporter.Core.TicketExporter">
+    <Position X="1.5" Y="6.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAACAAAAAEAAAEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TicketExporter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ZendeskTicketExporter.Core.Exporter">
+    <Position X="5" Y="6.5" Width="2.5" />
+    <InheritanceLine Type="ZendeskTicketExporter.Core.ExporterBase&lt;T&gt;" FixedToPoint="true">
+      <Path>
+        <Point X="4.75" Y="5.401" />
+        <Point X="4.75" Y="6.125" />
+        <Point X="6.188" Y="6.125" />
+        <Point X="6.188" Y="6.5" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAAiAAAAAEAAAEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exporter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="ZendeskTicketExporter.Core.IMergedTicketExporter&lt;T&gt;" Collapsed="true">
+    <Position X="10.5" Y="3" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IMergedTicketExporter.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ZendeskTicketExporter.Core.IExporter">
+    <Position X="3.25" Y="0.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAACAAAAAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>IExporter.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

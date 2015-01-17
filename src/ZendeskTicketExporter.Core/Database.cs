@@ -74,6 +74,11 @@ namespace ZendeskTicketExporter.Core
             return conn;
         }
 
+        public async Task DropTable(string tableName)
+        {
+            await ExecuteAsync(string.Format("drop table if exists {0} ;", tableName));
+        }
+
         private void CreateDatabaseIfNecessary()
         {
             if (File.Exists(_dbFile) == false)

@@ -8,8 +8,6 @@ namespace ZendeskTicketExporter.Core
 
         public static readonly string MarkersTableColumnName = "MarkerValue";
 
-        public static readonly string TicketsTableName = "tickets";
-
         // "You are only allowed to make 1 API call to this API end point every minute and we will return up to 1000 tickets per request."
         // http://developer.zendesk.com/documentation/rest_api/ticket_export.html on 4/9/2014
         public static readonly TimeSpan ZendeskRequiredCooloffBetweenIncrementalTicketExportResults = TimeSpan.FromMinutes(1);
@@ -24,12 +22,6 @@ namespace ZendeskTicketExporter.Core
         {
             var uri = new Uri(string.Format("https://{0}.zendesk.com/api/v2/", Uri.EscapeUriString(sitename)));
             return uri;
-        }
-
-        public static string GetZendeskIncrementalTicketExportUrl(long marker)
-        {
-            var url = "exports/tickets.json?start_time=" + marker;
-            return url;
         }
     }
 }

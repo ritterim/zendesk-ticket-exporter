@@ -12,5 +12,7 @@ namespace ZendeskTicketExporter.Core
         Task<T> QueryScalerAsync<T>(string sql, object param = null);
 
         Task<bool> TableExistsAsync(string tableName);
+
+        Task DropTable(string tableName);
     }
 }

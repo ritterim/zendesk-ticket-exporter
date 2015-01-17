@@ -1,103 +1,46 @@
-﻿using Common.Logging;
-using LiteGuard;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.Logging;
 using ZendeskApi_v2.Models.Tickets;
 
 namespace ZendeskTicketExporter.Core
 {
-    public class Exporter
+    /// <summary>
+    /// Concrete implementation for an exporter which uses TicketExportResult
+    /// </summary>
+    public sealed class Exporter : ExporterBase<TicketExportResult>
     {
-        private readonly ILog _log;
-        private readonly IDatabase _database;
         private readonly IMarkerStorage _markerStorage;
-        private readonly ITicketRetriever _ticketRetriever;
-        private readonly IMergedTicketExporter _mergeExporter;
-        private readonly ICsvFileWriter _csvFileWriter;
+        private readonly IMergedTicketExporter<TicketExportResult> _exporter;
 
-        public Exporter(
-            ILog log,
-            IDatabase database,
-            IMarkerStorage markerStorage,
-            ITicketRetriever ticketRetriever,
-            IMergedTicketExporter mergeExporter,
+
+        public Exporter(ILog log, IDatabase database, IMarkerStorage markerStorage,
+            ITicketRetriever ticketRetriever, IMergedTicketExporter<TicketExportResult> exporter,
             ICsvFileWriter csvFileWriter)
+            : base(log,
+                database,
+                ticketRetriever,
+                csvFileWriter
+                )
         {
-            _log = log;
-            _database = database;
             _markerStorage = markerStorage;
-            _ticketRetriever = ticketRetriever;
-            _mergeExporter = mergeExporter;
-            _csvFileWriter = csvFileWriter;
+            _exporter = exporter;
         }
 
-        public static Exporter GetDefaultInstance(string sitename, string username, string apiToken)
+        public static ExporterBase<TicketExportResult> GetDefaultInstance(string sitename, string username,
+            string apiToken)
         {
-            Guard.AgainstNullArgument("sitename", sitename);
-            Guard.AgainstNullArgument("username", username);
-            Guard.AgainstNullArgument("apiToken", apiToken);
+            VerifyValidCredentials(sitename, username, apiToken);
 
             var log = LogManager.GetCurrentClassLogger();
-            var dbFile = sitename + ".sqlite";
-            var database = new Database(dbFile);
+            var database = new Database(sitename + ".sqlite");
             var wait = new Wait(log);
             var zendeskApi = new ZendeskApi(sitename, username, apiToken);
-
-            return new Exporter(
-                log,
-                database,
-                new SQLiteMarkerStorage(database),
+            return new Exporter(log, database, new SQLiteMarkerStorage(database),
                 new TicketRetriever(wait, zendeskApi),
-                new SQLiteMergedTicketExporter(database),
+                new SqLiteMergedTicketExporter(database),
                 new CsvFileWriter());
-        }
-
-        public async Task RefreshLocalCopyFromServer(bool newDatabase = false)
-        {
-            var marker = await _markerStorage.GetCurrentMarker();
-
-            VerifyValidConfiguration(newDatabase, marker);
-
-            while (true)
-            {
-                _log.InfoFormat("Begin copying tickets using marker {0}.", marker.GetValueOrDefault());
-
-                var batch = await _ticketRetriever.GetBatchAsync(marker);
-                if (batch.Results.Any())
-                {
-                    _log.InfoFormat(
-                        "Inserting / updating {0} tickets in database retrieved from marker {1}.",
-                        batch.Results.Count(),
-                        marker.GetValueOrDefault());
-
-                    await _mergeExporter.WriteAsync(batch.Results);
-                }
-
-                marker = batch.EndTime;
-                await _markerStorage.UpdateCurrentMarker(marker.Value);
-
-                // Terminate when less than MaxItemsReturnedFromZendeskApi returned
-                // rather than when zero returned, otherwise could end up in an infinite
-                // loop if one or more tickets are created/updated in the course of the
-                // _ticketRetriever.GetBatch(marker); cooldown period over and over.
-                if (batch.Results.Count() < Configuration.ZendeskMaxItemsReturnedFromTicketExportApi)
-                    break;
-            }
-
-            _log.Info("Completed copying tickets.");
-        }
-
-        public async Task ExportLocalCopyToCsv(string csvFilePath, bool allowOverwrite = false)
-        {
-            Guard.AgainstNullArgument("csvFilePath", csvFilePath);
-
-            _log.Info("Writing tickets to csv file from local database.");
-
-            var records = await _database.QueryAsync<TicketExportResult>(
-                "select * from " + Configuration.TicketsTableName);
-
-            _csvFileWriter.WriteFile(records, csvFilePath, allowOverwrite);
         }
 
         /// <summary>
@@ -116,6 +59,42 @@ namespace ZendeskTicketExporter.Core
             if (newDatabase == false && marker.HasValue == false)
                 throw new InvalidOperationException(
                     "marker must have a value when not creating a new database.");
+        }
+
+        public override async Task RefreshLocalCopyFromServer(bool newDatabase = false)
+        {
+            var marker = await _markerStorage.GetCurrentMarker();
+
+            VerifyValidConfiguration(newDatabase, marker);
+
+            while (true)
+            {
+                _log.InfoFormat("Begin copying tickets using marker {0}.", marker.GetValueOrDefault());
+
+                var batch = await _ticketRetriever.GetBatchAsync(marker);
+                if (batch.Results.Any())
+                {
+                    _log.InfoFormat(
+                        "Inserting / updating {0} tickets in database retrieved from marker {1}.",
+                        batch.Results.Count(),
+                        marker.GetValueOrDefault());
+
+                    await _exporter.WriteAsync(batch.Results);
+                }
+
+                marker = batch.EndTime;
+                await _markerStorage.UpdateCurrentMarker(marker.Value);
+
+                // Terminate when less than MaxItemsReturnedFromZendeskApi returned
+                // rather than when zero returned, otherwise could end up in an infinite
+                // loop if one or more tickets are created/updated in the course of the
+                // _ticketRetriever.GetBatch(marker); cooldown period over and over.
+                if (batch.Results.Count() < Configuration.ZendeskMaxItemsReturnedFromTicketExportApi)
+                    break;
+            }
+
+            _log.Info("Completed copying tickets.");
+
         }
     }
 }
