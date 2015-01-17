@@ -89,10 +89,12 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="CsvFileWriterTests.cs" />
+    <Compile Include="ExporterTests.cs" />
     <Compile Include="InMemoryDatabase.cs" />
     <Compile Include="InMemorySQLiteConnection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQLiteMarkerStorageTests.cs" />
+    <Compile Include="SQLiteMergedTicketExporterTests.cs" />
     <Compile Include="TicketRetrieverTests.cs" />
     <Compile Include="WaitTests.cs" />
   </ItemGroup>

@@ -11,14 +11,14 @@ namespace ZendeskTicketExporter.Core
     /// TicketExportResult Does not contain complex object properties or IList properties so this original implementation
     /// works
     /// </summary>
-    public class SqLiteMergedTicketExportResult : MergedTicketExporterBase<TicketExportResult>
+    public class SqLiteMergedTicketExporter : MergedTicketExporterBase<TicketExportResult>
     {
-        public SqLiteMergedTicketExportResult(IDatabase database, string tableName)
+        public SqLiteMergedTicketExporter(IDatabase database, string tableName)
             : base(database, tableName)
         {
         }
 
-        public override async Task WriteAsync(IList<TicketExportResult> tickets)
+        public override async Task WriteAsync(IEnumerable<TicketExportResult> tickets)
         {
             Guard.AgainstNullArgument("tickets", tickets);
 

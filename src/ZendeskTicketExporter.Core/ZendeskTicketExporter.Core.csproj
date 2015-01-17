@@ -100,7 +100,7 @@
     <Compile Include="SinglePropertyPerColumnExporter.cs" />
     <Compile Include="SQLiteMarkerStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SqLiteMergedTicketExportResult.cs" />
+    <Compile Include="SqLiteMergedTicketExporter.cs" />
     <Compile Include="TicketResultFlattened.cs" />
     <Compile Include="TicketExporter.cs" />
     <Compile Include="Exporter.cs" />

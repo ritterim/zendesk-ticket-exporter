@@ -1,4 +1,8 @@
-﻿using Common.Logging;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using Common.Logging;
 using LiteGuard;
 using System.Threading.Tasks;
 
@@ -8,7 +12,7 @@ namespace ZendeskTicketExporter.Core
     /// Base class that allows for the export from the database to a csv file
     /// </summary>
     /// <typeparam name="T">The type to deserialize from the database to</typeparam>
-    public abstract class ExporterBase<T> : IExporter where T : new()
+    public abstract class ExporterBase<T> : IExporter 
     {
         protected readonly ILog _log;
         protected readonly IDatabase _database;
@@ -46,7 +50,6 @@ namespace ZendeskTicketExporter.Core
             _log.Info("Writing tickets to csv file from local database.");
 
             var records = await _database.QueryAsync<T>("select * from " + _tableName);
-
             _csvFileWriter.WriteFile(records, csvFilePath, allowOverwrite);
         }
     }

@@ -25,7 +25,7 @@ namespace ZendeskTicketExporter.Core
             DropTable();
         }
 
-        public override async Task WriteAsync(IList<Result> tickets)
+        public override async Task WriteAsync(IEnumerable<Result> tickets)
         {
             Guard.AgainstNullArgument("tickets", tickets);
             foreach (var ticket in tickets)

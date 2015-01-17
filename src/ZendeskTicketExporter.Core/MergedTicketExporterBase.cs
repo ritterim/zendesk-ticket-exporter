@@ -20,7 +20,7 @@ namespace ZendeskTicketExporter.Core
             _tableName = tableName;
         }
 
-        public abstract Task WriteAsync(IList<TTicketResult> tickets);
+        public abstract Task WriteAsync(IEnumerable<TTicketResult> tickets);
 
         protected void DropTable()
         {

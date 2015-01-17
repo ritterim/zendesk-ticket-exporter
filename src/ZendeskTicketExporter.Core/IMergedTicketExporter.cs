@@ -5,6 +5,6 @@ namespace ZendeskTicketExporter.Core
 {
     public interface IMergedTicketExporter<T> where T : new()
     {
-        Task WriteAsync(IList<T> tickets);
+        Task WriteAsync(IEnumerable<T> tickets);
     }
 }

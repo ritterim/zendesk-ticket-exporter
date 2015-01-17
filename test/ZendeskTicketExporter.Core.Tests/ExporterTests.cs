@@ -16,7 +16,7 @@ namespace ZendeskTicketExporter.Core.Tests
         private readonly IDatabase _database;
         private readonly IMarkerStorage _markerStorage;
         private readonly ITicketRetriever _ticketRetriever;
-        private readonly IMergedTicketExporter<TicketExportResponse> _mergeExporter;
+        private readonly IMergedTicketExporter<TicketExportResult> _mergeExporter;
         private readonly ICsvFileWriter _csvFileWriter;
         private readonly Exporter _sut;
 
@@ -26,7 +26,7 @@ namespace ZendeskTicketExporter.Core.Tests
             _database = Mock.Of<IDatabase>();
             _markerStorage = Mock.Of<IMarkerStorage>();
             _ticketRetriever = Mock.Of<ITicketRetriever>();
-            _mergeExporter = Mock.Of<IMergedTicketExporter<TicketExportResponse>>();
+            _mergeExporter = Mock.Of<IMergedTicketExporter<TicketExportResult>>();
             _csvFileWriter = Mock.Of<ICsvFileWriter>();
 
             _sut = new Exporter(_log, _database, _markerStorage, _ticketRetriever, _mergeExporter, _csvFileWriter);
@@ -188,7 +188,7 @@ namespace ZendeskTicketExporter.Core.Tests
 
             Mock.Get(_database).Verify(
                 x => x.QueryAsync<TicketExportResult>(
-                    "select * from " + Exporter.TicketsTableName,
+                    "select * from " + Exporter.TableName,
                     /* param */ null),
                 Times.Once());
         }
@@ -203,7 +203,7 @@ namespace ZendeskTicketExporter.Core.Tests
 
             Mock.Get(_database)
                 .Setup(x => x.QueryAsync<TicketExportResult>(
-                    "select * from " + Exporter.TicketsTableName,
+                    "select * from " + Exporter.TableName,
                     /* param */ null))
                 .ReturnsAsync(records);
 
