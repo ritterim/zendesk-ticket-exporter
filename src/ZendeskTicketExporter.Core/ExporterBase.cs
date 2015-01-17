@@ -14,7 +14,7 @@ namespace ZendeskTicketExporter.Core
         protected readonly IDatabase _database;
         protected readonly ITicketRetriever _ticketRetriever;
         protected readonly ICsvFileWriter _csvFileWriter;
-        protected static readonly string TableName = typeof(T).Name;
+        public  readonly string TableName = typeof(T).Name;
 
         protected ExporterBase(
             ILog log,
