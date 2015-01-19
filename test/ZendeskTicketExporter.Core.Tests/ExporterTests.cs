@@ -182,13 +182,33 @@ namespace ZendeskTicketExporter.Core.Tests
         }
 
         [Fact]
+        public async Task RefreshLocalCopyFromServer_when_getExtendedTicketInformation_true_should_save_extended_information()
+        {
+            await _sut.RefreshLocalCopyFromServer(getExtendedTicketInformation: true, newDatabase: true);
+
+            Mock.Get(_mergeExporter).Verify(
+                x => x.WriteAsync(It.IsAny<IEnumerable<FlattenedTicket>>()),
+                Times.Once());
+        }
+
+        [Fact]
+        public async Task RefreshLocalCopyFromServer_when_getExtendedTicketInformation_false_should_not_save_extended_information()
+        {
+            await _sut.RefreshLocalCopyFromServer(getExtendedTicketInformation: true, newDatabase: true);
+
+            Mock.Get(_mergeExporter).Verify(
+                x => x.WriteAsync(It.IsAny<IEnumerable<FlattenedTicket>>()),
+                Times.Once());
+        }
+
+        [Fact]
         public async Task ExportLocalCopyToCsv_queries_database()
         {
             await _sut.ExportLocalCopyToCsv("theFile.csv");
 
             Mock.Get(_database).Verify(
                 x => x.QueryAsync<TicketExportResult>(
-                    "select * from " + Configuration.TicketsTableName,
+                    "select * from " + Configuration.TicketsExportTableName,
                     /* param */ null),
                 Times.Once());
         }
@@ -203,11 +223,44 @@ namespace ZendeskTicketExporter.Core.Tests
 
             Mock.Get(_database)
                 .Setup(x => x.QueryAsync<TicketExportResult>(
-                    "select * from " + Configuration.TicketsTableName,
+                    "select * from " + Configuration.TicketsExportTableName,
                     /* param */ null))
                 .ReturnsAsync(records);
 
             await _sut.ExportLocalCopyToCsv("theFile.csv", allowOverwrite: false);
+
+            Mock.Get(_csvFileWriter).Verify(
+                x => x.WriteFile(records, "theFile.csv", /* allowOverwrite */ false),
+                Times.Once());
+        }
+
+        [Fact]
+        public async Task ExportLocalCopyToCsvWithExtendedInformation_queries_database()
+        {
+            await _sut.ExportLocalCopyToCsvWithExtendedInformation("theFile.csv");
+
+            Mock.Get(_database).Verify(
+                x => x.QueryAsync<Ticket>(
+                    "select * from " + Configuration.TicketsTableName,
+                    /* param */ null),
+                Times.Once());
+        }
+
+        [Fact]
+        public async Task ExportLocalCopyToCsvWithExtendedInformation_calls_CsvFileWriter_with_results_from_database()
+        {
+            var records = new List<Ticket>()
+            {
+                new Ticket()
+            };
+
+            Mock.Get(_database)
+                .Setup(x => x.QueryAsync<Ticket>(
+                    "select * from " + Configuration.TicketsTableName,
+                    /* param */ null))
+                .ReturnsAsync(records);
+
+            await _sut.ExportLocalCopyToCsvWithExtendedInformation("theFile.csv", allowOverwrite: false);
 
             Mock.Get(_csvFileWriter).Verify(
                 x => x.WriteFile(records, "theFile.csv", /* allowOverwrite */ false),

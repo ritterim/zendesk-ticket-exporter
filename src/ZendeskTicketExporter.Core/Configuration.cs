@@ -10,6 +10,8 @@ namespace ZendeskTicketExporter.Core
 
         public static readonly string TicketsTableName = "tickets";
 
+        public static readonly string TicketsExportTableName = "tickets_export";
+
         // "You are only allowed to make 1 API call to this API end point every minute and we will return up to 1000 tickets per request."
         // http://developer.zendesk.com/documentation/rest_api/ticket_export.html on 4/9/2014
         public static readonly TimeSpan ZendeskRequiredCooloffBetweenIncrementalTicketExportResults = TimeSpan.FromMinutes(1);

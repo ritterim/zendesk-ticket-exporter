@@ -1,14 +1,19 @@
-﻿using Common.Logging;
+﻿using AutoMapper;
+using Common.Logging;
 using LiteGuard;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ZendeskApi_v2.Models.Tickets;
+using ZendeskTicketExporter.Core.Extensions;
 
 namespace ZendeskTicketExporter.Core
 {
     public class Exporter
     {
+        public static IZendeskApi ZendeskApi;
+
         private readonly ILog _log;
         private readonly IDatabase _database;
         private readonly IMarkerStorage _markerStorage;
@@ -42,7 +47,9 @@ namespace ZendeskTicketExporter.Core
             var dbFile = sitename + ".sqlite";
             var database = new Database(dbFile);
             var wait = new Wait(log);
-            var zendeskApi = new ZendeskApi(sitename, username, apiToken);
+            var zendeskApi = new ZendeskApi(sitename, username, apiToken, log);
+
+            ZendeskApi = zendeskApi;
 
             return new Exporter(
                 log,
@@ -53,12 +60,49 @@ namespace ZendeskTicketExporter.Core
                 new CsvFileWriter());
         }
 
-        public async Task RefreshLocalCopyFromServer(bool newDatabase = false)
+        public async Task RefreshLocalCopyFromServer(bool getExtendedTicketInformation = false, bool newDatabase = false)
         {
             var marker = await _markerStorage.GetCurrentMarker();
 
             VerifyValidConfiguration(newDatabase, marker);
 
+            await RefreshFromServer(marker);
+
+            if (getExtendedTicketInformation)
+            {
+                _log.Info("Begin copying extended ticket information.");
+                await RefreshExtendedInformationFromServer(marker);
+            }
+
+            _log.Info("Completed copying tickets.");
+        }
+
+        public async Task ExportLocalCopyToCsv(string csvFilePath, bool allowOverwrite = false)
+        {
+            Guard.AgainstNullArgument("csvFilePath", csvFilePath);
+
+            _log.Info("Writing tickets to csv file from local database.");
+
+            var records = await _database.QueryAsync<TicketExportResult>(
+                "select * from " + Configuration.TicketsExportTableName);
+
+            _csvFileWriter.WriteFile(records, csvFilePath, allowOverwrite);
+        }
+
+        public async Task ExportLocalCopyToCsvWithExtendedInformation(string csvFilePath, bool allowOverwrite = false)
+        {
+            Guard.AgainstNullArgument("csvFilePath", csvFilePath);
+
+            _log.Info("Writing tickets to csv file from local database.");
+
+            var records = await _database.QueryAsync<Ticket>(
+                "select * from " + Configuration.TicketsTableName);
+
+            _csvFileWriter.WriteFile(records, csvFilePath, allowOverwrite);
+        }
+
+        private async Task<long?> RefreshFromServer(long? marker)
+        {
             while (true)
             {
                 _log.InfoFormat("Begin copying tickets using marker {0}.", marker.GetValueOrDefault());
@@ -85,19 +129,66 @@ namespace ZendeskTicketExporter.Core
                     break;
             }
 
-            _log.Info("Completed copying tickets.");
+            return marker;
         }
 
-        public async Task ExportLocalCopyToCsv(string csvFilePath, bool allowOverwrite = false)
+        private async Task RefreshExtendedInformationFromServer(long? marker)
         {
-            Guard.AgainstNullArgument("csvFilePath", csvFilePath);
+            _log.InfoFormat(
+                "Begin copying tickets extended information using marker {0}.",
+                marker.GetValueOrDefault());
 
-            _log.Info("Writing tickets to csv file from local database.");
+            var ticketIds = await GetTicketIdsToUpdateAsync(marker);
 
-            var records = await _database.QueryAsync<TicketExportResult>(
-                "select * from " + Configuration.TicketsTableName);
+            var tickets = await _ticketRetriever.GetAsync(ticketIds);
 
-            _csvFileWriter.WriteFile(records, csvFilePath, allowOverwrite);
+            var flattenedTickets = Mapper.Map<IEnumerable<Ticket>, IEnumerable<FlattenedTicket>>(tickets);
+
+            await _mergeExporter.WriteAsync(flattenedTickets);
+        }
+
+        private async Task<IEnumerable<long>> GetTicketIdsToUpdateAsync(long? marker)
+        {
+            IEnumerable<long> ticketIds = null;
+            if (await _database.TableExistsAsync(Configuration.TicketsTableName))
+            {
+                // Update missing tickets and tickets that have been modified since previous run
+                // (which could have happened in the past with getExtendedTicketInformation == false)
+
+                var startingTimestamp = marker == null
+                    ? (DateTime.Now)
+                    : marker.Value.FromUnixTime();
+
+                ticketIds = await _database.QueryAsync<long>(
+                    string.Format(
+                        @"select Id from {0} where UpdatedAt <= @startingTimestamp
+                          union
+                          select Id from {0} where not exists(select Id from {1})",
+                        Configuration.TicketsExportTableName,
+                        Configuration.TicketsTableName),
+                        new { startingTimestamp = SqliteLocalDateTimeString(startingTimestamp) });
+            }
+            else
+            {
+                // Refresh all
+
+                ticketIds = await _database.QueryAsync<long>(
+                    string.Format("select Id from {0}", Configuration.TicketsExportTableName));
+            }
+
+            return ticketIds;
+        }
+
+        // 2014-04-28 13:00:00 -0400
+        private string SqliteLocalDateTimeString(DateTime dateTime)
+        {
+            // Adapted from http://stackoverflow.com/a/4879166/941536
+            var utcOffset = TimeZone.CurrentTimeZone.GetUtcOffset(dateTime.ToLocalTime());
+            var dateTimeString = dateTime.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss ") +
+                ((utcOffset < TimeSpan.Zero) ? "-" : "+") +
+                utcOffset.ToString("hhmm");
+
+            return dateTimeString;
         }
 
         /// <summary>

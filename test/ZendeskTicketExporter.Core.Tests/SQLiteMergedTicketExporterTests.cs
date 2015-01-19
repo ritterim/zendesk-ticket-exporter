@@ -17,7 +17,38 @@ namespace ZendeskTicketExporter.Core.Tests
         }
 
         [Fact]
-        public async Task WriteAsync_creates_table_if_not_exists()
+        public async Task WriteAsync_FlattenedTickets_creates_table_if_not_exists()
+        {
+            var flattenedTickets = new List<FlattenedTicket>()
+            {
+                new FlattenedTicket() { Id = 1 }
+            };
+
+            await _sut.WriteAsync(flattenedTickets);
+
+            await AssertRecordCountIs(Configuration.TicketsTableName, 1);
+        }
+
+        [Fact]
+        public async Task WriteAsync_FlattenedTickets_inserts_records_twice()
+        {
+            var flattenedTickets = new List<FlattenedTicket>()
+            {
+                new FlattenedTicket() { Id = 1 }
+            };
+            var flattenedTickets2 = new List<FlattenedTicket>()
+            {
+                new FlattenedTicket() { Id = 2 }
+            };
+
+            await _sut.WriteAsync(flattenedTickets);
+            await _sut.WriteAsync(flattenedTickets2);
+
+            await AssertRecordCountIs(Configuration.TicketsTableName, 2);
+        }
+
+        [Fact]
+        public async Task WriteAsync_TicketExportResult_creates_table_if_not_exists()
         {
             var tickets = new List<TicketExportResult>()
             {
@@ -26,11 +57,11 @@ namespace ZendeskTicketExporter.Core.Tests
 
             await _sut.WriteAsync(tickets);
 
-            await AssertRecordCountIs(1);
+            await AssertRecordCountIs(Configuration.TicketsExportTableName, 1);
         }
 
         [Fact]
-        public async Task WriteAsync_inserts_records_twice()
+        public async Task WriteAsync_TicketExportResult_inserts_records_twice()
         {
             var tickets = new List<TicketExportResult>()
             {
@@ -44,13 +75,13 @@ namespace ZendeskTicketExporter.Core.Tests
             await _sut.WriteAsync(tickets);
             await _sut.WriteAsync(tickets2);
 
-            await AssertRecordCountIs(2);
+            await AssertRecordCountIs(Configuration.TicketsExportTableName, 2);
         }
 
-        private async Task AssertRecordCountIs(long count)
+        private async Task AssertRecordCountIs(string tableName, long count)
         {
             var actual = await _database.QueryScalerAsync<long>(
-                "select count(*) from " + Configuration.TicketsTableName);
+                "select count(*) from " + tableName);
 
             Assert.Equal(count, actual);
         }

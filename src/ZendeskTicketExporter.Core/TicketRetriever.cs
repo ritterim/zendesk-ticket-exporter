@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ZendeskApi_v2.Models.Tickets;
 
@@ -17,6 +18,12 @@ namespace ZendeskTicketExporter.Core
             _wait = wait;
             _zendeskApi = zendeskApi;
             _utcNowProvider = utcNowProvider ?? (() => DateTime.UtcNow);
+        }
+
+        public async Task<IEnumerable<Ticket>> GetAsync(IEnumerable<long> ids)
+        {
+            var tickets = await _zendeskApi.GetTicketsAsync(ids);
+            return tickets;
         }
 
         public async Task<TicketExportResponse> GetBatchAsync(long? marker)
