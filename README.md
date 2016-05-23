@@ -52,7 +52,7 @@ Options:
 --------
 ```
 -s, --sitename                     Required. Sitename for accessing Zendesk
-                                   API (https://[your-site-name].zendesk.com).
+                                   API ([your-site-name].zendesk.com).
 
 -u, --username                     Required. Username for accessing Zendesk
                                    API (do not include "/token").

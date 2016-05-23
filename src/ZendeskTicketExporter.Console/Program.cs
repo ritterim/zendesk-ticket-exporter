@@ -11,7 +11,7 @@ namespace ZendeskTicketExporter.Console
     internal class Options
     {
         [Option('s', "sitename", Required = true,
-            HelpText = "Sitename for accessing Zendesk API (https://[your-site-name].zendesk.com).")]
+            HelpText = "Sitename for accessing Zendesk API ([your-site-name].zendesk.com).")]
         public string Sitename { get; set; }
 
         [Option('u', "username", Required = true,
