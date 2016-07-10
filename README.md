@@ -1,7 +1,7 @@
 ZenDesk Ticket Incremental Exporter
 ===================================
 
-A Windows console application for keeping a local copy of your [Zendesk](http://www.zendesk.com/) tickets updated in an application-managed SQLite database, with optional export to csv.
+A Windows console application for keeping a local copy of your [Zendesk](https://www.zendesk.com/) tickets updated in an application-managed SQLite database, with optional export to csv.
 
 Prerequisites
 -------------
