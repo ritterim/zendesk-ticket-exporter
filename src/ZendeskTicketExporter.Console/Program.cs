@@ -26,6 +26,11 @@ namespace ZendeskTicketExporter.Console
             HelpText = "Permit creation of a new database, does not permit refresh of existing database. This is to ensure compliance with the Zendesk API guidelines.")]
         public bool NewDatabase { get; set; }
 
+        [Option('x', "get-extended-information", Required = false,
+            HelpText = "Include extended ticket information. This will increase the time required to retrieve updated data.")]
+        // TODO: Update README.md to include this parameter
+        public bool IncludeExtendedTicketInformation { get; set; }
+
         [Option('e', "export-csv-file", Required = false,
             HelpText = "Path to CVS export file, if not specified no CSV export will be performed.")]
         public string CsvExportPath { get; set; }
@@ -53,14 +58,27 @@ namespace ZendeskTicketExporter.Console
                     options.Username,
                     options.ApiToken);
 
-                exporter.RefreshLocalCopyFromServer(options.NewDatabase).Wait();
+                exporter.RefreshLocalCopyFromServer(
+                    options.IncludeExtendedTicketInformation,
+                    options.NewDatabase)
+                    .Wait();
 
                 if (string.IsNullOrWhiteSpace(options.CsvExportPath) == false)
                 {
-                    exporter.ExportLocalCopyToCsv(
-                        options.CsvExportPath,
-                        options.CsvExportPathPermitOverwrite)
-                        .Wait();
+                    if (options.IncludeExtendedTicketInformation)
+                    {
+                        exporter.ExportLocalCopyToCsvWithExtendedInformation(
+                            options.CsvExportPath,
+                            options.CsvExportPathPermitOverwrite)
+                            .Wait();
+                    }
+                    else
+                    {
+                        exporter.ExportLocalCopyToCsv(
+                            options.CsvExportPath,
+                            options.CsvExportPathPermitOverwrite)
+                            .Wait();
+                    }
                 }
             }
             else
