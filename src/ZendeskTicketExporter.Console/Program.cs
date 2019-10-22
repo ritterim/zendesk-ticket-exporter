@@ -43,6 +43,8 @@ namespace ZendeskTicketExporter.Console
     {
         private static void Main(string[] args)
         {
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12 | System.Net.SecurityProtocolType.Tls11 | System.Net.SecurityProtocolType.Tls;
+
             var options = new Options();
             if (Parser.Default.ParseArguments(args, options))
             {
